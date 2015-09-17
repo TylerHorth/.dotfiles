@@ -1,3 +1,9 @@
+" Use pathogen to easily modify the runtime path to include all
+" plugins under the ~/.vim/bundle directory
+call pathogen#infect()
+call pathogen#helptags()
+Helptags
+
 " mapleader
 let mapleader=","
 
@@ -51,9 +57,9 @@ set pastetoggle=<F2>
 map <F5> :redraw!<CR>:AirlineRefresh<CR>
 
 " Source a global configuration file if available
-"if filereadable("/etc/vim/vimrc.local")
-"  source /etc/vim/vimrc.local
-"endif
+if filereadable("/etc/vim/vimrc.local")
+  source /etc/vim/vimrc.local
+endif
 
 " Quickly edit/reload the vimrc file
 nmap <silent> <leader>ev :e $MYVIMRC<CR>
@@ -94,11 +100,6 @@ hi MatchParen cterm=none ctermbg=234 ctermfg=202
 " Nerd Tree
 map <C-n> :NERDTreeToggle<CR>
 
-" Use pathogen to easily modify the runtime path to include all
-" plugins under the ~/.vim/bundle directory
-call pathogen#helptags()
-call pathogen#infect()
-Helptags
 
 " Airline
 set laststatus=2
