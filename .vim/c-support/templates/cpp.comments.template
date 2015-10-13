@@ -46,7 +46,7 @@
 //        Version:  1.0
 //        Created:  |DATE| |TIME|
 //       Revision:  none
-//       Compiler:  g++
+//       Compiler:  |CPPCOMPILER|
 //
 //         Author:  |AUTHOR| (|AUTHORREF|), |EMAIL|
 //   Organization:  |ORGANIZATION|
@@ -62,7 +62,7 @@
 //        Version:  1.0
 //        Created:  |DATE| |TIME|
 //       Revision:  none
-//       Compiler:  g++
+//       Compiler:  |CPPCOMPILER|
 //
 //         Author:  |AUTHOR| (|AUTHORREF|), |EMAIL|
 //   Organization:  |ORGANIZATION|

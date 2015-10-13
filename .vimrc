@@ -109,6 +109,7 @@ nnoremap k gk
 "nnoremap ; 
 
 " Colorscheme
+colorscheme monokai
 let g:rehash256 = 1
 colorscheme	molokai
 hi MatchParen cterm=none ctermbg=234 ctermfg=202
@@ -127,13 +128,10 @@ if !exists('g:airline_symbols')
 endif
 let g:airline_theme = 'powerlineish'
 
-" auto pair
-"let g:AutoPairsFlyMode = 1
-"let g:AutoPairsShortcutJump = '<C-_>'
-
 " delimitMate
 let delimitMate_jump_expansion = 1
 let delimitMate_expand_cr = 1
+let delimitMate_expand_space = 1
 let delimitMate_smart_matchpairs = 1
 imap <C-_> <Plug>delimitMateS-Tab
 
@@ -142,9 +140,12 @@ xnoremap <leader>p "_dP"
 
 " c.vim
 let g:C_Ctrl_j = 'off'
+let g:C_CExtension = 'c'
 let g:C_CCompiler = 'clang'
 let g:C_CFlags = '-O1 -g -c -fno-omit-frame-pointer -fsanitize=address -std=c99'
 let g:C_LFlags = '-O1 -g -Wall -fno-omit-frame-pointer -fsanitize=address -std=c99'
+let g:C_CplusCompiler = 'g++'
+let g:C_VimCompilerName = 'g++'
 
 " Splits
 nnoremap <C-j> <C-W>j
@@ -170,6 +171,10 @@ function! MarmosetSubmit(...)
 	execute "!marmoset submit cs136 " . l:assignment . " " . l:filePaths
 endfunction
 
+function! FileSubmit() 
+	execute "!marmoset_submit cs246 " . split(expand("%:r"), "/")[-1] . " " expand("%")
+endfunction
+
 function! MarmosetResults()
 	set wig=*test*,*.o,*_exe*
 	let l:filePaths = substitute(globpath('%:p:h','*'), "\n", " ", "g")
@@ -180,6 +185,7 @@ function! MarmosetResults()
 endfunction
 
 command! -nargs=? Submit call MarmosetSubmit(<f-args>)
+command! FileSubmit call FileSubmit()
 command! Results call MarmosetResults()
 
 " Automatically open, but do not go to (if there are errors) the quickfix /
@@ -206,7 +212,14 @@ function! RunDir()
 	execute "!" . expand('%:p:r') . "_exe"
 endfunction
 
+function! RunFile()
+	execute "silent !chmod u=rwx " . expand('%:p')
+	execute "!" . expand('%:p')
+endfunction
+
 command! CompileDir call CompileDir()
 command! RunDir call RunDir()
+command! RunFile call RunFile()
 map <F7> :CompileDir<CR>
 map <F8> :w<CR>:RunDir<CR>
+map <leader>r :w<CR>:RunFile<CR>

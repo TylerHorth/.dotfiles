@@ -2,15 +2,17 @@
 §  User Macros
 § ==========================================================
 
-SetMacro( 'AUTHOR',      'YOUR NAME' )
-SetMacro( 'AUTHORREF',   '' )
+SetMacro( 'AUTHOR',      'Tyler Horth' )
+SetMacro( 'AUTHORREF',   'th' )
 SetMacro( 'COMPANY',     '' )
 SetMacro( 'COPYRIGHT',   '' )
-SetMacro( 'EMAIL',       '' )
+SetMacro( 'EMAIL',       'tdphorth@uwaterloo.ca' )
 SetMacro( 'LICENSE',     '' )
-SetMacro( 'ORGANIZATION','' )
+SetMacro( 'ORGANIZATION','University of Waterloo' )
+SetMacro( 'CCOMPILER',   'clang' )
+SetMacro( 'CPPCOMPILER', 'g++' )
 
-SetStyle( 'C' )
+SetStyle( 'CPP' )
 
 § prefix used for Doxygen commands, '\' or '@'
 SetMacro( 'DOX_CMD', '\' )
