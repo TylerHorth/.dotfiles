@@ -16,6 +16,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'bling/vim-airline'
 Plugin 'scrooloose/nerdtree'
 Plugin 'Raimondi/delimitMate'
+Plugin 'Valloric/YouCompleteMe'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -146,6 +147,10 @@ let g:C_CFlags = '-O1 -g -c -fno-omit-frame-pointer -fsanitize=address -std=c99'
 let g:C_LFlags = '-O1 -g -Wall -fno-omit-frame-pointer -fsanitize=address -std=c99'
 let g:C_CplusCompiler = 'g++'
 let g:C_VimCompilerName = 'g++'
+
+" YouCompleteMe
+let g:ycm_global_ycm_extra_conf = '~/.vim/ycm.py'
+let g:ycm_extra_conf_vim_data = ['&filetype']
 
 " Splits
 nnoremap <C-j> <C-W>j
