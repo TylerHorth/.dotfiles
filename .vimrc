@@ -140,7 +140,7 @@ imap <C-_> <Plug>delimitMateS-Tab
 xnoremap <leader>p "_dP"
 
 " c.vim
-let g:C_Ctrl_j = 'off'
+let g:C_Ctrl_j = 'on'
 let g:C_CExtension = 'c'
 let g:C_CCompiler = 'clang'
 let g:C_CFlags = '-O1 -g -c -fno-omit-frame-pointer -fsanitize=address -std=c99'
@@ -153,45 +153,56 @@ let g:ycm_global_ycm_extra_conf = '~/.vim/ycm.py'
 let g:ycm_extra_conf_vim_data = ['&filetype']
 
 " Splits
-nnoremap <C-j> <C-W>j
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+"nnoremap <C-j> <C-W>j
+"nnoremap <C-K> <C-W><C-K>
+"nnoremap <C-L> <C-W><C-L>
+"nnoremap <C-H> <C-W><C-H>
 set splitbelow
 set splitright
 
 " Marmoset
 function! MarmosetSubmit(...)
 	if a:0 > 0
-		let ignore = a:1
-	else 
-		let ignore = ""
+		let t:Files=a:1
 	end
-	let &wig = "*test_*,*tests*,*.o,*_exe*" . ignore
-	set wig?
-	let l:filePaths = substitute(globpath('%:p:h','**'), "\n", " ", "g")
-	set wig=
-	let l:pathPieces = split(l:filePaths, "/")
-	let l:assignment = l:pathPieces[3] . substitute(l:pathPieces[4], "q","P", "")
-	execute "!marmoset submit cs136 " . l:assignment . " " . l:filePaths
+	if !exists("t:Files")
+		let t:Files=expand("%")
+	end
+	if exists("g:Course") && exists("t:Assignment")
+		execute "!marmoset submit " . g:Course . " " . t:Assignment . " " . t:Files
+	else
+		echo "g:Course/t:Assignment not defined! (:h let)"
+	end
 endfunction
 
-function! FileSubmit() 
-	execute "!marmoset_submit cs246 " . split(expand("%:r"), "/")[-1] . " " expand("%")
+function! MarmosetFetch()
+	if exists("g:Course") && exists("t:Assignment")
+		execute "!marmoset fetch " . g:Course . " " . t:Assignment
+	else
+		echo "g:Course/t:Assignment not defined! (:h let)"
+	end
 endfunction
 
-function! MarmosetResults()
-	set wig=*test*,*.o,*_exe*
-	let l:filePaths = substitute(globpath('%:p:h','*'), "\n", " ", "g")
-	set wig=
-	let l:pathPieces = split(l:filePaths, "/")
-	let l:assignment = l:pathPieces[3] . substitute(l:pathPieces[4], "q","P", "")
-	execute "!marmoset long cs136 " . l:assignment
+function! MarmosetLong()
+	if exists("g:Course") && exists("t:Assignment")
+		execute "!marmoset long " . g:Course . " " . t:Assignment
+	else
+		echo "g:Course/t:Assignment not defined! (:h let)"
+	end
+endfunction
+
+function! MarmosetRelease()
+	if exists("g:Course") && exists("t:Assignment")
+		execute "!marmoset release " . g:Course . " " . t:Assignment
+	else
+		echo "g:Course/t:Assignment not defined! (:h let)"
+	end
 endfunction
 
 command! -nargs=? Submit call MarmosetSubmit(<f-args>)
-command! FileSubmit call FileSubmit()
-command! Results call MarmosetResults()
+command! Fetch call MarmosetFetch()
+command! Long call MarmosetLong()
+command! Release call MarmosetRelease()
 
 " Automatically open, but do not go to (if there are errors) the quickfix /
 " location list window, or close it when is has become empty.
