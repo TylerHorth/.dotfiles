@@ -17,12 +17,18 @@ Plugin 'bling/vim-airline'
 Plugin 'scrooloose/nerdtree'
 Plugin 'Raimondi/delimitMate'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'mhinz/vim-startify'
+Plugin 'a.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 
 " mapleader
 let mapleader=","
+
+" a.vim
+nnoremap \a :A<CR>
+let g:alternateNoDefaultAlternate = 1
 
 " Vim5 and later versions support syntax highlighting. Uncommenting the next
 " line enables syntax highlighting by default.
@@ -140,7 +146,7 @@ imap <C-_> <Plug>delimitMateS-Tab
 xnoremap <leader>p "_dP"
 
 " c.vim
-let g:C_Ctrl_j = 'on'
+let g:C_Ctrl_j = 'off'
 let g:C_CExtension = 'c'
 let g:C_CCompiler = 'clang'
 let g:C_CFlags = '-O1 -g -c -fno-omit-frame-pointer -fsanitize=address -std=c99'
@@ -153,14 +159,37 @@ let g:ycm_global_ycm_extra_conf = '~/.vim/ycm.py'
 let g:ycm_extra_conf_vim_data = ['&filetype']
 
 " Splits
-"nnoremap <C-j> <C-W>j
-"nnoremap <C-K> <C-W><C-K>
-"nnoremap <C-L> <C-W><C-L>
-"nnoremap <C-H> <C-W><C-H>
+nnoremap <C-j> <C-W>j
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
 set splitbelow
 set splitright
 
+" Sessions
+"set ssop-=options    " do not store global and local values in a session
+"set ssop-=folds      " do not store folds
+
+" Startify
+function! s:filter_header(lines) abort
+    let longest_line   = max(map(copy(a:lines), 'len(v:val)'))
+    let centered_lines = map(copy(a:lines),
+        \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
+    return centered_lines
+endfunction
+let g:startify_session_persistence = 1
+let g:startify_custom_header =
+          \ map(s:filter_header(split(system('fortune | cowsay -f $(ls /usr/share/cows/ | shuf -n1)'), '\n')), '"   ". v:val') + ['']
+let g:startify_list_order = [
+            \ ['   Bookmarks'],
+            \ 'bookmarks',
+            \ ['   Sessions'],
+            \ 'sessions',
+            \ ]
+let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
 " Marmoset
+let g:Course="cs246"
+
 function! MarmosetSubmit(...)
 	if a:0 > 0
 		let t:Files=a:1
