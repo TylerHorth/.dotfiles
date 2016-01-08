@@ -24,6 +24,7 @@ Plugin 'tpope/vim-bundler.git'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'mattn/emmet-vim'
+Plugin 'c.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
