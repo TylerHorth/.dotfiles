@@ -19,6 +19,11 @@ Plugin 'Raimondi/delimitMate'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'mhinz/vim-startify'
 Plugin 'a.vim'
+Plugin 'tpope/vim-rails.git'
+Plugin 'tpope/vim-bundler.git'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'junegunn/vim-easy-align'
+Plugin 'mattn/emmet-vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -26,9 +31,102 @@ call vundle#end()            " required
 " mapleader
 let mapleader=","
 
+set noshowmode
+
+" buffer nav
+nmap <leader>b :bn<CR>
+nmap <leader>B :bN<CR>
+nmap <leader>q :q<CR>
+nmap <leader>Q :bd<CR>
+
+" emmet
+let g:user_emmet_leader_key = '<C-e>'
+imap <leader><Tab> <plug>(emmet-expand-abbr)
+imap <C-y>u        <plug>(emmet-update-tag)
+imap <C-y>d        <plug>(emmet-balance-tag-inward)
+imap <C-y>D        <plug>(emmet-balance-tag-outward)
+imap <leader>n     <plug>(emmet-move-next)
+imap <leader>N     <plug>(emmet-move-prev)
+imap <C-y>i        <plug>(emmet-image-size)
+imap <C-y>/        <plug>(emmet-toggle-comment)
+imap <C-y>j        <plug>(emmet-split-join-tag)
+imap <C-y>k        <plug>(emmet-remove-tag)
+imap <C-y>a        <plug>(emmet-anchorize-url)
+imap <C-y>A        <plug>(emmet-anchorize-summary)
+imap <C-y>m        <plug>(emmet-merge-lines)
+imap <C-y>c        <plug>(emmet-code-pretty)
+
+" the main function
+function! SmartEnter()
+  " beware of the cmdline window
+  if &buftype == "nofile"
+    return "\<CR>"
+  endif
+
+  " get the character on the left of the cursor
+  let previous = getline(".")[col(".")-2]
+
+  " get the character on the right of the cursor
+  let next     = getline(".")[col(".")-1]
+
+  " do the right thing
+  if previous ==# "{"
+    return PairExpander(previous, "}", next)
+  elseif previous ==# "["
+    return PairExpander(previous, "]", next)
+  elseif previous ==# "("
+    return PairExpander(previous, ")", next)
+  elseif previous ==# ">"
+    return TagExpander(next)
+  else
+    return "\<CR>"
+  endif
+endfunction
+
+" expands {}, (), []
+function! PairExpander(left, right, next)
+  let pair_position = searchpairpos(a:left, "", a:right, "Wn")
+  if a:next !=# a:right && pair_position[0] == 0
+    return "\<CR>" . a:right . "\<C-o>==\<C-o>O"
+  elseif a:next !=# a:right && pair_position[0] != 0 && indent(pair_position[0]) != indent(".")
+    return "\<CR>" . a:right . "\<C-o>==\<C-o>O"
+  elseif a:next ==# a:right
+    return "\<CR>\<C-o>==\<C-o>O"
+  else
+    return "\<CR>"
+  endif
+endfunction
+
+" expands <tag></tag>
+function! TagExpander(next)
+  if a:next ==# "<" && getline(".")[col(".")] ==# "/"
+    if getline(".")[searchpos("<", "bnW")[1]] ==# "/" || getline(".")[searchpos("<", "bnW")[1]] !=# getline(".")[col(".") + 1]
+      return "\<CR>"
+    else
+      return "\<CR>\<C-o>==\<C-o>O"
+    endif
+  else
+    return "\<CR>"
+  endif
+endfunction
+
+inoremap <expr> <CR> SmartEnter()
+
+" vim easy align
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
 " a.vim
 nnoremap \a :A<CR>
 let g:alternateNoDefaultAlternate = 1
+
+" Rails
+inoremap <leader><leader> <%  %><C-O>2h
+inoremap <leader>= <%=  %><C-O>2h
+inoremap <leader># <%#  %><C-O>2h
 
 " Vim5 and later versions support syntax highlighting. Uncommenting the next
 " line enables syntax highlighting by default.
@@ -73,9 +171,10 @@ set shiftround          " use multiple of shiftwidth when indenting with '<' and
 " set smarttab            " insert tabs on the start of a line according to
 		        "    shiftwidth, not tabstop
 set hlsearch            " highlight search terms
+set foldmethod=syntax " Create folds based on syntax
+set foldlevelstart=99 " Folds are not closed to start
+set pastetoggle=<F2> " Paste mode
 
-" Paste mode
-set pastetoggle=<F2>
 " Redraw/refresh
 map <F5> :redraw!<CR>:AirlineRefresh<CR>
 
@@ -92,6 +191,10 @@ nmap <silent> <leader>ss :w<CR>
 " New lines from normal mode
 nmap <leader>k O<Esc>j
 nmap <leader>j o<Esc>k
+
+" Line up / Line down from insert
+inoremap <C-J> <C-O>o
+inoremap <C-K> <C-O>O
 
 " Change cursor when changing modes
 if has("autocmd")
@@ -112,9 +215,6 @@ endif
 nnoremap j gj
 nnoremap k gk
 
-" Fuck Shift
-"nnoremap ; 
-
 " Colorscheme
 colorscheme monokai
 let g:rehash256 = 1
@@ -123,7 +223,6 @@ hi MatchParen cterm=none ctermbg=234 ctermfg=202
 
 " Nerd Tree
 map <C-n> :NERDTreeToggle<CR>
-
 
 " Airline
 set laststatus=2
@@ -134,6 +233,7 @@ if !exists('g:airline_symbols')
 	let g:airline_symbols = {}
 endif
 let g:airline_theme = 'powerlineish'
+
 
 " delimitMate
 let delimitMate_jump_expansion = 1
@@ -157,6 +257,11 @@ let g:C_VimCompilerName = 'g++'
 " YouCompleteMe
 let g:ycm_global_ycm_extra_conf = '~/.vim/ycm.py'
 let g:ycm_extra_conf_vim_data = ['&filetype']
+" Apply fixit
+map <leader>fi :YcmCompleter FixIt<CR> 
+
+" Clear search on return
+nnoremap <CR> :noh<CR><CR>
 
 " Splits
 nnoremap <C-j> <C-W>j
