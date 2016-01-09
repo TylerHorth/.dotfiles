@@ -125,9 +125,9 @@ nnoremap \a :A<CR>
 let g:alternateNoDefaultAlternate = 1
 
 " Rails
-inoremap <leader><leader> <%  %><C-O>2h
-inoremap <leader>= <%=  %><C-O>2h
-inoremap <leader># <%#  %><C-O>2h
+inoremap <leader><leader> <%  %><C-\><C-O>3h
+inoremap <leader>= <%=  %><C-\><C-O>3h
+inoremap <leader># <%#  %><C-\><C-O>3h
 
 " Vim5 and later versions support syntax highlighting. Uncommenting the next
 " line enables syntax highlighting by default.
