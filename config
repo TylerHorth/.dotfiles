@@ -170,4 +170,3 @@ for_window [title="Guake!"] floating enable
 
 # Startup
 exec guake
-exec "~/.screenlayout/screens.sh"
