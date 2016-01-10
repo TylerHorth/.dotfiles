@@ -40,4 +40,5 @@ ln -s .i3status.conf $HOME/.i3status.conf
 ## To Do
 - Identify dependencies
 - Refactor .vimrc
+- Install script
 - . . . 
