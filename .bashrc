@@ -10,6 +10,8 @@ PS1='[\u@\h \W]\$ '
 
 xset -b # disable bell
 
+set -o vi
+
 setxkbmap -option ctrl:nocaps       # Make Caps Lock a Control key
 ps cax | grep xcape > /dev/null
 if [ $? -eq 0 ]; then
