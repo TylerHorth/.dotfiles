@@ -1,3 +1,4 @@
-bundle/
-session/
+/bundle/**
+!/bundle/Vundle.vim/
+/session/
 /ycm.pyc
