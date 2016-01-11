@@ -1,4 +1,3 @@
-/bundle/**
-!/bundle/Vundle.vim/
-/session/
-/ycm.pyc
+*
+!/.gitignore
+!/colors/**

@@ -1,34 +1,34 @@
-set nocompatible              " be iMproved, required
-filetype off                  " required
+set nocompatible
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+" Install vim-plug if we don't arlready have it
+if empty(glob("~/.vim/autoload/plug.vim"))
+    execute 'silent !mkdir -p ~/.vim/plugged'
+    execute 'silent !mkdir -p ~/.vim/autoload'
+    execute 'silent !curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+endif
 
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+call plug#begin('~/.vim/plugged')
 
 " Plugins
-Plugin 'kien/ctrlp.vim'
-Plugin 'tpope/vim-surround'
-Plugin 'bling/vim-airline'
-Plugin 'scrooloose/nerdtree'
-Plugin 'Raimondi/delimitMate'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'mhinz/vim-startify'
-Plugin 'a.vim'
-Plugin 'tpope/vim-rails.git'
-Plugin 'tpope/vim-bundler.git'
-Plugin 'easymotion/vim-easymotion'
-Plugin 'junegunn/vim-easy-align'
-Plugin 'mattn/emmet-vim'
-Plugin 'c.vim'
-Plugin 'tpope/vim-fugitive'
+Plug 'kien/ctrlp.vim'
+Plug 'tpope/vim-surround'
+Plug 'bling/vim-airline'
+Plug 'scrooloose/nerdtree'
+Plug 'Raimondi/delimitMate'
+Plug 'PotatoesMaster/i3-vim-syntax', {'for': 'i3'}
+Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --clang-complete'  }
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
+Plug 'mhinz/vim-startify'
+Plug 'a.vim'
+Plug 'tpope/vim-rails'
+Plug 'tpope/vim-bundler'
+Plug 'easymotion/vim-easymotion'
+Plug 'junegunn/vim-easy-align'
+Plug 'mattn/emmet-vim'
+Plug 'c.vim'
+Plug 'tpope/vim-fugitive'
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
+call plug#end()     
 
 " mapleader
 let mapleader=","
@@ -130,26 +130,9 @@ inoremap <leader><leader> <%  %><C-\><C-O>3h
 inoremap <leader>= <%=  %><C-\><C-O>3h
 inoremap <leader># <%#  %><C-\><C-O>3h
 
-" Vim5 and later versions support syntax highlighting. Uncommenting the next
-" line enables syntax highlighting by default.
-if has("syntax")
-  syntax on
-endif
-
-" If using a dark background within the editing area and syntax highlighting
-" turn on this option as well
-" set background=dark
-
-" Uncomment the following to have Vim jump to the last position when
-" reopening a file
+" Jump to the last position when reopening a file
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
-
-" Uncomment the following to have Vim load indentation rules and plugins
-" according to the detected filetype.
-if has("autocmd")
-  filetype plugin indent on
 endif
 
 " The following are commented out as they cause vim to behave a lot
