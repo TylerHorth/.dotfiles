@@ -14,6 +14,7 @@ cd .dotfiles
 ln -s .vimrc $HOME/.vimrc
 ln -s .vim $HOME/.vim
 ```
+Run :PlugInstall inside vim
 ###### Powerline Fonts
 ```bash
 # Run install script
