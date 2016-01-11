@@ -20,6 +20,7 @@ Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --clang-complete'  }
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
 Plug 'mhinz/vim-startify'
 Plug 'a.vim'
+Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-bundler'
 Plug 'easymotion/vim-easymotion'
