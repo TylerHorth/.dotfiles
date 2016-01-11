@@ -13,8 +13,9 @@ cd .dotfiles
 # Create symbolic links
 ln -s .vimrc $HOME/.vimrc
 ln -s .vim $HOME/.vim
+# Install plugins
+vim +PlugInstall +qall
 ```
-Run :PlugInstall inside vim
 ###### Powerline Fonts
 ```bash
 # Run install script
