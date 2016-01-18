@@ -9,8 +9,8 @@ git clone --recursive https://github.com/TylerHorth/.dotfiles
 ### Vim
 ```bash
 # Create symbolic links
-ln -s .vimrc $HOME/.vimrc
-ln -s .vim $HOME/.vim
+ln -s $HOME/.dotfiles/.vimrc
+ln -s $HOME/.dotfiles/.vim
 # Install plugins
 vim +PlugInstall +qall
 ```
@@ -23,18 +23,18 @@ vim +PlugInstall +qall
 ### Bash
 ```bash
 # Create symbolic link
-ln -s .bashrc $HOME/.bashrc
+ln -s $HOME/.dotfiles/.bashrc
 ```
 ----
 ### i3
 ```bash
 # Create symbolic link
-ln -s config $HOME/.config/i3/config
+ln -s $HOME/.dotfiles/config config $HOME/.config/i3/config
 ```
 ###### py3status
 ```bash
 # Create symbolic link
-ln -s .i3status.conf $HOME/.i3status.conf
+ln -s $HOME/.dotfiles/.i3status.conf
 ```
 ----  
 ## To Do
