@@ -28,6 +28,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
 Plug 'c.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'scrooloose/syntastic'
 
 call plug#end()     
 
@@ -58,6 +59,10 @@ imap <C-y>a        <plug>(emmet-anchorize-url)
 imap <C-y>A        <plug>(emmet-anchorize-summary)
 imap <C-y>m        <plug>(emmet-merge-lines)
 imap <C-y>c        <plug>(emmet-code-pretty)
+
+" Easymotion shortcuts
+nmap f ,,w
+nmap F ,,b
 
 " the main function
 function! SmartEnter()

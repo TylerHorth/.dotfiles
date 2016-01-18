@@ -4,8 +4,6 @@ My personal configuration files . . . and stuff.
 ```bash
 # Clone .dotfiles repo and all submodules
 git clone --recursive https://github.com/TylerHorth/.dotfiles
-# cd into .dotfiles directory
-cd .dotfiles
 ```
 ----
 ### Vim
