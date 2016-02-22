@@ -15,20 +15,23 @@ Plug 'tpope/vim-surround'
 Plug 'bling/vim-airline'
 Plug 'scrooloose/nerdtree'
 Plug 'Raimondi/delimitMate'
-Plug 'PotatoesMaster/i3-vim-syntax', {'for': 'i3'}
-Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --clang-complete'  }
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
+Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
+Plug 'Valloric/YouCompleteMe', { 'for': [ 'c', 'cpp', 'cc' ], 'do': './install.sh --clang-complete'  }
+Plug 'rdnetto/YCM-Generator', { 'for': [ 'c', 'cpp', 'cc' ], 'branch': 'stable' }
 Plug 'mhinz/vim-startify'
-Plug 'a.vim'
+Plug 'a.vim', { 'for': [ 'c', 'cpp', 'cc' ] }
 Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-bundler'
 Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
-Plug 'c.vim'
+Plug 'c.vim', { 'for': [ 'c', 'cpp', 'cc' ] }
 Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/syntastic'
+Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
+Plug 'Valloric/MatchTagAlways'
+Plug 'tomtom/tcomment_vim'
 
 call plug#end()     
 
@@ -36,17 +39,41 @@ call plug#end()
 let mapleader=","
 
 set noshowmode
+set clipboard="unnamed"
 
 " buffer nav
-nmap <leader>b :bn<CR>
-nmap <leader>B :bN<CR>
-nmap <leader>q :q<CR>
-nmap <leader>Q :bd<CR>
+nmap L :bn<CR>
+nmap H :bN<CR>
+nmap <leader>qq :bd<CR>
+nmap <leader>qw :q<CR>
+nmap <leader>qa :qa<CR>
+
+" Quickly edit/reload the vimrc file
+nmap <silent> <leader>ev :e $MYVIMRC<CR>
+nmap <silent> <leader>sv :so $MYVIMRC<CR>
+nmap <silent> <leader>ww :w<CR>
+nmap <silent> <leader>ss :w<CR>
+nmap <silent> <leader>wq :wq<CR>
+
+" New lines from normal mode
+nmap <leader>k O<Esc>j
+nmap <leader>j o<Esc>k
+
+" Line up / Line down from insert
+inoremap <C-J> <C-O>o
+inoremap <C-K> <C-O>O
+
+" paste from insert
+imap <C-p> <C-O>p
+imap <C-S-p> <C-O>P
+
+" ack instead of grep
+set grepprg=ack
 
 " emmet
 let g:user_emmet_leader_key = '<C-e>'
 imap <leader><Tab> <plug>(emmet-expand-abbr)
-imap <C-y>u        <plug>(emmet-update-tag)
+map  <leader>u     <plug>(emmet-update-tag)
 imap <C-y>d        <plug>(emmet-balance-tag-inward)
 imap <C-y>D        <plug>(emmet-balance-tag-outward)
 imap <leader>n     <plug>(emmet-move-next)
@@ -60,9 +87,34 @@ imap <C-y>A        <plug>(emmet-anchorize-summary)
 imap <C-y>m        <plug>(emmet-merge-lines)
 imap <C-y>c        <plug>(emmet-code-pretty)
 
+" ctrlp
+let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
+      \ --ignore .git
+      \ --ignore .svn
+      \ --ignore .hg
+      \ --ignore .DS_Store
+      \ --ignore "**/*.pyc"
+      \ -g ""'
+let g:ctrlp_working_path_mode = 'r'
+let g:ctrlp_use_caching = 1
+let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_lazy_update = 20
+
+" Syntastic
+let g:syntastic_shell = "/bin/sh"
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
 " Easymotion shortcuts
-nmap f ,,w
-nmap F ,,b
+nmap <leader>fa <Plug>(easymotion-jumptoanywhere)
 
 " the main function
 function! SmartEnter()
@@ -75,6 +127,24 @@ function! SmartEnter()
   let previous = getline(".")[col(".")-2]
 
   " get the character on the right of the cursor
+  let next     = getline(".")[col(".")-1]
+
+  " do the right thing
+  if previous ==# "{"
+    return PairExpander(previous, "}", next)
+  elseif previous ==# "["
+    return PairExpander(previous, "]", next)
+  elseif previous ==# "("
+    return PairExpander(previous, ")", next)
+  elseif previous ==# ">"
+    return TagExpander(next)
+  else
+    return "\<CR>"
+  endif
+endfunction
+
+" expands {}, (), []
+function! PairExpander(left, right, next)
   let next     = getline(".")[col(".")-1]
 
   " do the right thing
@@ -133,7 +203,7 @@ let g:alternateNoDefaultAlternate = 1
 
 " Rails
 inoremap <leader><leader> <%  %><C-\><C-O>3h
-inoremap <leader>= <%=  %><C-\><C-O>3h
+inoremap <leader>. <%=  %><C-\><C-O>3h
 inoremap <leader># <%#  %><C-\><C-O>3h
 
 " Jump to the last position when reopening a file
@@ -158,11 +228,12 @@ set backspace=indent,eol,start
 "set copyindent          " copy the previous indentation on autoindenting
 set number              " always show line numbers
 set shiftwidth=2        " number of spaces to use for autoindenting
+set expandtab						" Spaces instad of tabs
 set shiftround          " use multiple of shiftwidth when indenting with '<' and '>'
 " set smarttab            " insert tabs on the start of a line according to
 		        "    shiftwidth, not tabstop
 set hlsearch            " highlight search terms
-set foldmethod=syntax " Create folds based on syntax
+set foldmethod=indent " Create folds based on syntax
 set foldlevelstart=99 " Folds are not closed to start
 set pastetoggle=<F2> " Paste mode
 
@@ -174,18 +245,6 @@ if filereadable("/etc/vim/vimrc.local")
   source /etc/vim/vimrc.local
 endif
 
-" Quickly edit/reload the vimrc file
-nmap <silent> <leader>ev :e $MYVIMRC<CR>
-nmap <silent> <leader>sv :so $MYVIMRC<CR>
-nmap <silent> <leader>ss :w<CR>
-
-" New lines from normal mode
-nmap <leader>k O<Esc>j
-nmap <leader>j o<Esc>k
-
-" Line up / Line down from insert
-inoremap <C-J> <C-O>o
-inoremap <C-K> <C-O>O
 
 " Change cursor when changing modes
 if has("autocmd")
@@ -226,13 +285,12 @@ if !exists('g:airline_symbols')
 endif
 let g:airline_theme = 'powerlineish'
 
-
 " delimitMate
 let delimitMate_jump_expansion = 1
 let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
 let delimitMate_smart_matchpairs = 1
-imap <C-_> <Plug>delimitMateS-Tab
+imap <C-@> <Plug>delimitMateS-Tab
 
 " Visualmode repaste
 xnoremap <leader>p "_dP"
@@ -276,7 +334,7 @@ function! s:filter_header(lines) abort
 endfunction
 let g:startify_session_persistence = 1
 let g:startify_custom_header =
-          \ map(s:filter_header(split(system('fortune | cowsay -f $(ls /usr/share/cows/ | shuf -n1)'), '\n')), '"   ". v:val') + ['']
+          \ map(s:filter_header(split(system("bash -c 'fortune | cowsay -f $(ls /usr/share/cows/ | shuf -n1)'"), '\n')), '"   ". v:val') + ['']
 let g:startify_list_order = [
             \ ['   Bookmarks'],
             \ 'bookmarks',
@@ -284,6 +342,7 @@ let g:startify_list_order = [
             \ 'sessions',
             \ ]
 let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
+
 " Marmoset
 let g:Course="cs246"
 
@@ -319,7 +378,6 @@ endfunction
 
 function! MarmosetRelease()
 	if exists("g:Course") && exists("t:Assignment")
-		execute "!marmoset release " . g:Course . " " . t:Assignment
 	else
 		echo "g:Course/t:Assignment not defined! (:h let)"
 	end
