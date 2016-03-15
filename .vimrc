@@ -12,26 +12,29 @@ call plug#begin('~/.vim/plugged')
 " Plugins
 Plug 'kien/ctrlp.vim'
 Plug 'tpope/vim-surround'
-Plug 'bling/vim-airline'
-Plug 'scrooloose/nerdtree'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Raimondi/delimitMate'
 Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
-Plug 'Valloric/YouCompleteMe', { 'for': [ 'c', 'cpp', 'cc' ], 'do': './install.sh --clang-complete'  }
-Plug 'rdnetto/YCM-Generator', { 'for': [ 'c', 'cpp', 'cc' ], 'branch': 'stable' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --clang-complete' }
+Plug 'rdnetto/YCM-Generator', { 'for': [ 'c', 'cpp' ], 'branch': 'stable' }
 Plug 'mhinz/vim-startify'
-Plug 'a.vim', { 'for': [ 'c', 'cpp', 'cc' ] }
-Plug 'vim-ruby/vim-ruby'
-Plug 'tpope/vim-rails'
-Plug 'tpope/vim-bundler'
+Plug 'a.vim', { 'for': [ 'c', 'cpp' ] }
+Plug 'vim-ruby/vim-ruby', { 'for': [ 'eruby', 'ruby' ] }
+Plug 'tpope/vim-rails', { 'for': [ 'eruby', 'ruby' ] }
+Plug 'tpope/vim-bundler', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'easymotion/vim-easymotion'
-Plug 'junegunn/vim-easy-align'
-Plug 'mattn/emmet-vim'
-Plug 'c.vim', { 'for': [ 'c', 'cpp', 'cc' ] }
+Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
+Plug 'mattn/emmet-vim', { 'for': [ 'html', 'eruby' ] }
+Plug 'c.vim', { 'for': [ 'c', 'cpp' ] }
 Plug 'tpope/vim-fugitive'
-Plug 'scrooloose/syntastic'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
-Plug 'Valloric/MatchTagAlways'
+Plug 'Valloric/MatchTagAlways', { 'for': [ 'html', 'eruby' ] }
 Plug 'tomtom/tcomment_vim'
+Plug 'nixprime/cpsm', { 'do': './install.sh' }
+Plug 'idanarye/vim-merginal'
+Plug 'tpope/vim-ragtag'
 
 call plug#end()     
 
@@ -42,11 +45,13 @@ set noshowmode
 set clipboard="unnamed"
 
 " buffer nav
-nmap L :bn<CR>
-nmap H :bN<CR>
-nmap <leader>qq :bd<CR>
-nmap <leader>qw :q<CR>
-nmap <leader>qa :qa<CR>
+nnoremap L :bn<CR>
+nnoremap H :bN<CR>
+nnoremap J gT
+nnoremap K gt
+nnoremap <leader>qq :bd<CR>
+nnoremap <leader>qw :q<CR>
+nnoremap <leader>qa :qa<CR>
 
 " Quickly edit/reload the vimrc file
 nmap <silent> <leader>ev :e $MYVIMRC<CR>
@@ -67,8 +72,9 @@ inoremap <C-K> <C-O>O
 imap <C-p> <C-O>p
 imap <C-S-p> <C-O>P
 
-" ack instead of grep
-set grepprg=ack
+" ag instead of grep
+set grepprg=ag\ --vimgrep\ $*
+set grepformat=%f:%l:%c:%m
 
 " emmet
 let g:user_emmet_leader_key = '<C-e>'
@@ -89,29 +95,23 @@ imap <C-y>c        <plug>(emmet-code-pretty)
 
 " ctrlp
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
-let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
-      \ --ignore .git
-      \ --ignore .svn
-      \ --ignore .hg
-      \ --ignore .DS_Store
-      \ --ignore "**/*.pyc"
-      \ -g ""'
-let g:ctrlp_working_path_mode = 'r'
-let g:ctrlp_use_caching = 1
-let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_lazy_update = 20
-
-" Syntastic
-let g:syntastic_shell = "/bin/sh"
-
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+let g:ctrlp_user_command = {
+  \ 'types': {
+    \ 1: ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard'],
+    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+    \ },
+  \ 'fallback': 'ag %s -l --nocolor --nogroup --hidden',
+  \ 'ignore': 1
+  \ }
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\.git$\|\.yardoc\|public$|log\|tmp$',
+  \ 'file': '\.so$\|\.bak$|\.swp$|\.dat$|\.DS_Store$'
+  \ }
+let g:ctrlp_use_caching = 1 
+let g:ctrlp_clear_cache_on_exit = 1
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_lazy_update = 0 
+let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
 
 " Easymotion shortcuts
 nmap <leader>fa <Plug>(easymotion-jumptoanywhere)
@@ -201,10 +201,13 @@ nmap ga <Plug>(EasyAlign)
 nnoremap \a :A<CR>
 let g:alternateNoDefaultAlternate = 1
 
+" Merginal
+nmap <leader>m :Merginal<CR>
+
 " Rails
-inoremap <leader><leader> <%  %><C-\><C-O>3h
-inoremap <leader>. <%=  %><C-\><C-O>3h
-inoremap <leader># <%#  %><C-\><C-O>3h
+" inoremap <leader><leader> <%  %><C-\><C-O>3h
+" inoremap <leader>. <%=  %><C-\><C-O>3h
+" inoremap <leader># <%#  %><C-\><C-O>3h
 
 " Jump to the last position when reopening a file
 if has("autocmd")
@@ -244,7 +247,6 @@ map <F5> :redraw!<CR>:AirlineRefresh<CR>
 if filereadable("/etc/vim/vimrc.local")
   source /etc/vim/vimrc.local
 endif
-
 
 " Change cursor when changing modes
 if has("autocmd")
@@ -290,7 +292,8 @@ let delimitMate_jump_expansion = 1
 let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
 let delimitMate_smart_matchpairs = 1
-imap <C-@> <Plug>delimitMateS-Tab
+let g:ycm_key_invoke_completion = ''
+imap <Nul> <Plug>delimitMateS-Tab
 
 " Visualmode repaste
 xnoremap <leader>p "_dP"
@@ -314,7 +317,7 @@ map <leader>fi :YcmCompleter FixIt<CR>
 nnoremap <CR> :noh<CR><CR>
 
 " Splits
-nnoremap <C-j> <C-W>j
+nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
