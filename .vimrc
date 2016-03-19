@@ -45,6 +45,7 @@ Plug 'jelera/vim-javascript-syntax'
 Plug 'pangloss/vim-javascript'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
+Plug 'sjl/badwolf'
 
 call plug#end()     
 
@@ -134,9 +135,7 @@ nnoremap <C-H> <C-W><C-H>
 
 " -------------- COLORSCHEME -------------
 
-let g:rehash256 = 1
-colorscheme	molokai
-hi MatchParen cterm=none ctermbg=234 ctermfg=202
+colorscheme	badwolf
 
 
 " -------------- AUTOCMD -----------------
@@ -189,7 +188,6 @@ let g:airline_powerline_fonts = 1
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
 endif
-let g:airline_theme = 'powerlineish'
 
 
 " -------------- nerdtree ----------------
