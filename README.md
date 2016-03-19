@@ -25,6 +25,12 @@ vim +PlugInstall +qall
 # Create symbolic link
 ln -s ~/.dotfiles/.bashrc ~/.bashrc
 ```
+----  
+### fish
+```bash
+# Create symbolic link
+ln -s ~/.dotfiles/config.fish ~/.config/fish/config.fish
+```
 ----
 ### i3
 ```bash
@@ -35,12 +41,6 @@ ln -s ~/.dotfiles/config ~/.config/i3/config
 ```bash
 # Create symbolic link
 ln -s ~/.dotfiles/.i3status.conf ~/.i3status.conf
-```
-----  
-###### fish
-```bash
-# Create symbolic link
-ln -s ~/.dotfiles/config.fish ~/.config/fish/config.fish
 ```
 ----  
 ## To Do
