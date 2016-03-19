@@ -35,6 +35,9 @@ Plug 'tomtom/tcomment_vim'
 Plug 'nixprime/cpsm', { 'do': './install.sh' }
 Plug 'idanarye/vim-merginal'
 Plug 'tpope/vim-ragtag'
+Plug 'tpope/vim-repeat'
+Plug 'svermeulen/vim-easyclip'
+Plug 'lervag/vimtex'
 
 call plug#end()     
 
@@ -42,7 +45,7 @@ call plug#end()
 let mapleader=","
 
 set noshowmode
-set clipboard="unnamed"
+set clipboard=unnamed,unnamedplus
 
 " buffer nav
 nnoremap L :bn<CR>
@@ -92,6 +95,13 @@ imap <C-y>a        <plug>(emmet-anchorize-url)
 imap <C-y>A        <plug>(emmet-anchorize-summary)
 imap <C-y>m        <plug>(emmet-merge-lines)
 imap <C-y>c        <plug>(emmet-code-pretty)
+
+" easyclip
+let g:EasyClipAutoFormat = 1
+let g:EasyClipUseSubstituteDefaults = 1 
+let g:EasyClipUsePasteToggleDefaults = 0
+nmap ]p <plug>EasyClipSwapPasteForward
+nmap [p <plug>EasyClipSwapPasteBackwards
 
 " ctrlp
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
@@ -294,9 +304,6 @@ let delimitMate_expand_space = 1
 let delimitMate_smart_matchpairs = 1
 let g:ycm_key_invoke_completion = ''
 imap <Nul> <Plug>delimitMateS-Tab
-
-" Visualmode repaste
-xnoremap <leader>p "_dP"
 
 " c.vim
 let g:C_Ctrl_j = 'off'
