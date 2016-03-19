@@ -9,8 +9,8 @@ git clone --recursive https://github.com/TylerHorth/.dotfiles
 ### Vim
 ```bash
 # Create symbolic links
-ln -s .dotfiles/.vimrc
-ln -s .dotfiles/.vim
+ln -s ~/.dotfiles/.vimrc ~/.vimrc
+ln -s ~/.dotfiles/.vim ~/.vim
 # Install plugins
 vim +PlugInstall +qall
 ```
@@ -23,22 +23,27 @@ vim +PlugInstall +qall
 ### Bash
 ```bash
 # Create symbolic link
-ln -s .dotfiles/.bashrc
+ln -s ~/.dotfiles/.bashrc ~/.bashrc
 ```
 ----
 ### i3
 ```bash
 # Create symbolic link
-ln -s .dotfiles/config .config/i3/config
+ln -s ~/.dotfiles/config ~/.config/i3/config 
 ```
 ###### py3status
 ```bash
 # Create symbolic link
-ln -s .dotfiles/.i3status.conf
+ln -s ~/.dotfiles/.i3status.conf ~/.i3status.conf
+```
+----  
+###### fish
+```bash
+# Create symbolic link
+ln -s ~/.dotfiles/config.fish ~/.config/fish/config.fish
 ```
 ----  
 ## To Do
 - Identify dependencies
-- Refactor .vimrc
 - Install script
 - . . . 
