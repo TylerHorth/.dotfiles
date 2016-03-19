@@ -9,7 +9,11 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-" Plugins
+
+" ---------------------------------------- 
+"                PLUGINS 
+" ---------------------------------------- 
+
 Plug 'kien/ctrlp.vim'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
@@ -20,14 +24,12 @@ Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --clang-complete' }
 Plug 'rdnetto/YCM-Generator', { 'for': [ 'c', 'cpp' ], 'branch': 'stable' }
 Plug 'mhinz/vim-startify'
-Plug 'a.vim', { 'for': [ 'c', 'cpp' ] }
 Plug 'vim-ruby/vim-ruby', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'tpope/vim-rails', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'tpope/vim-bundler', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
 Plug 'mattn/emmet-vim', { 'for': [ 'html', 'eruby' ] }
-Plug 'c.vim', { 'for': [ 'c', 'cpp' ] }
 Plug 'tpope/vim-fugitive'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
 Plug 'Valloric/MatchTagAlways', { 'for': [ 'html', 'eruby' ] }
@@ -38,14 +40,55 @@ Plug 'tpope/vim-ragtag'
 Plug 'tpope/vim-repeat'
 Plug 'svermeulen/vim-easyclip'
 Plug 'lervag/vimtex'
+Plug 'moll/vim-node'
+Plug 'jelera/vim-javascript-syntax'
+Plug 'pangloss/vim-javascript'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
 
 call plug#end()     
 
-" mapleader
-let mapleader=","
 
-set noshowmode
-set clipboard=unnamed,unnamedplus
+" ---------------------------------------- 
+"                SETTINGS 
+" ---------------------------------------- 
+
+" -------------- LETS --------------------
+
+let mapleader=","                 " Mapleader            
+
+
+" -------------- SETS --------------------
+
+set showcmd                       " Show (partial) command in status line.
+set showmatch                     " Show matching brackets.
+set ignorecase                    " Do case insensitive matching
+set smartcase                     " Do smart case matching
+set incsearch                     " Incremental search
+set autowrite                     " Automatically save before commands like :next and :make
+set hidden                        " Hide buffers when they are abandoned
+set mouse=a                       " Enable mouse usage (all modes)
+set tabstop=2                     " a tab is two spaces
+set backspace=indent,eol,start    " allow backspacing over everything in insert mode
+set number                        " always show line numbers
+set shiftwidth=2                  " number of spaces to use for autoindenting
+set expandtab                     " Spaces instad of tabs
+set shiftround                    " use multiple of shiftwidth when indenting with '<' and '>'
+set hlsearch                      " highlight search terms
+set foldmethod=indent             " Create folds based on syntax
+set foldlevelstart=99             " Folds are not closed to start
+set pastetoggle=<F2>              " Paste mode
+set t_Co=256                      " Use 256 colors
+set noshowmode                    " Don't show current mode
+set clipboard=unnamed,unnamedplus " Merge system and vim clipboards
+set background=dark               " Set background to dark
+set grepprg=ag\ --vimgrep\ $*     " Use ag instead of grep
+set grepformat=%f:%l:%c:%m        " Set grepformat for ag 
+set splitbelow                    " Default to split below current window
+set splitright                    " Default to split on the right of window
+
+
+" -------------- MAPS --------------------
 
 " buffer nav
 nnoremap L :bn<CR>
@@ -75,11 +118,135 @@ inoremap <C-K> <C-O>O
 imap <C-p> <C-O>p
 imap <C-S-p> <C-O>P
 
-" ag instead of grep
-set grepprg=ag\ --vimgrep\ $*
-set grepformat=%f:%l:%c:%m
+" Long line nav
+nnoremap j gj
+nnoremap k gk
 
-" emmet
+" Clear search on return
+nnoremap <CR> :noh<CR><CR>
+
+" Splits
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+
+" -------------- COLORSCHEME -------------
+
+let g:rehash256 = 1
+colorscheme	molokai
+hi MatchParen cterm=none ctermbg=234 ctermfg=202
+
+
+" -------------- AUTOCMD -----------------
+
+" Automatically open, but do not go to (if there are errors) the quickfix /
+" location list window, or close it when is has become empty.
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
+
+" Jump to the last position when reopening a file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+
+" ---------------------------------------- 
+"                PLUGIN OPTIONS 
+" ---------------------------------------- 
+
+" -------------- ctrlp.vim --------------- 
+
+let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+let g:ctrlp_user_command = {
+      \ 'types': {
+      \ 1: ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard'],
+      \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+      \ },
+      \ 'fallback': 'ag %s -l --nocolor --nogroup --hidden',
+      \ 'ignore': 1
+      \ }
+let g:ctrlp_custom_ignore = {
+      \ 'dir':  '\.git$\|\.yardoc\|public$|log\|tmp$',
+      \ 'file': '\.so$\|\.bak$|\.swp$|\.dat$|\.DS_Store$'
+      \ }
+let g:ctrlp_use_caching = 1 
+let g:ctrlp_clear_cache_on_exit = 1
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_lazy_update = 0 
+let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
+
+
+" -------------- vim-airline -------------
+
+map <F5> :redraw!<CR>:AirlineRefresh<CR>
+set laststatus=2
+set timeoutlen=1000 ttimeoutlen=0
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline_powerline_fonts = 1
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_theme = 'powerlineish'
+
+
+" -------------- nerdtree ----------------
+
+map <C-n> :NERDTreeToggle<CR>
+
+
+" -------------- delimitMate -------------
+
+let delimitMate_jump_expansion = 1
+let delimitMate_expand_cr = 1
+let delimitMate_expand_space = 1
+let delimitMate_smart_matchpairs = 1
+let g:ycm_key_invoke_completion = ''
+imap <Nul> <Plug>delimitMateS-Tab
+
+
+" -------------- YouCompleteMe -----------
+
+let g:ycm_global_ycm_extra_conf = '~/.vim/ycm.py'
+let g:ycm_extra_conf_vim_data = ['&filetype']
+map <leader>fi :YcmCompleter FixIt<CR> 
+
+
+" -------------- vim-startify ------------
+
+function! s:filter_header(lines) abort
+  let longest_line   = max(map(copy(a:lines), 'len(v:val)'))
+  let centered_lines = map(copy(a:lines),
+        \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
+  return centered_lines
+endfunction
+let g:startify_session_persistence = 1
+let g:startify_custom_header =
+      \ map(s:filter_header(split(system("bash -c 'fortune | cowsay -f $(ls /usr/share/cows/ | shuf -n1)'"), '\n')), '"   ". v:val') + ['']
+let g:startify_list_order = [
+      \ ['   Bookmarks'],
+      \ 'bookmarks',
+      \ ['   Sessions'],
+      \ 'sessions',
+      \ ]
+let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
+
+
+" -------------- vim-easymotion ----------
+
+nmap <leader>fa <Plug>(easymotion-jumptoanywhere)
+
+
+" -------------- vim-easy-align ----------
+
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+
+" -------------- emmet-vim ---------------
+
 let g:user_emmet_leader_key = '<C-e>'
 imap <leader><Tab> <plug>(emmet-expand-abbr)
 map  <leader>u     <plug>(emmet-update-tag)
@@ -96,35 +263,28 @@ imap <C-y>A        <plug>(emmet-anchorize-summary)
 imap <C-y>m        <plug>(emmet-merge-lines)
 imap <C-y>c        <plug>(emmet-code-pretty)
 
-" easyclip
+
+" -------------- vim-merginal ------------
+
+nmap <leader>m :Merginal<CR>
+
+
+" -------------- vim-easyclip ------------
+
 let g:EasyClipAutoFormat = 1
 let g:EasyClipUseSubstituteDefaults = 1 
 let g:EasyClipUsePasteToggleDefaults = 0
 nmap ]p <plug>EasyClipSwapPasteForward
 nmap [p <plug>EasyClipSwapPasteBackwards
 
-" ctrlp
-let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
-let g:ctrlp_user_command = {
-  \ 'types': {
-    \ 1: ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard'],
-    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
-    \ },
-  \ 'fallback': 'ag %s -l --nocolor --nogroup --hidden',
-  \ 'ignore': 1
-  \ }
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.yardoc\|public$|log\|tmp$',
-  \ 'file': '\.so$\|\.bak$|\.swp$|\.dat$|\.DS_Store$'
-  \ }
-let g:ctrlp_use_caching = 1 
-let g:ctrlp_clear_cache_on_exit = 1
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_lazy_update = 0 
-let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
 
-" Easymotion shortcuts
-nmap <leader>fa <Plug>(easymotion-jumptoanywhere)
+
+" ---------------------------------------- 
+"                FUNCTIONS
+" ---------------------------------------- 
+
+
+" -------------- SmartEnter --------------
 
 " the main function
 function! SmartEnter()
@@ -200,160 +360,9 @@ endfunction
 
 inoremap <expr> <CR> SmartEnter()
 
-" vim easy align
-" Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
 
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
+" -------------- Marmoset ----------------
 
-" a.vim
-nnoremap \a :A<CR>
-let g:alternateNoDefaultAlternate = 1
-
-" Merginal
-nmap <leader>m :Merginal<CR>
-
-" Rails
-" inoremap <leader><leader> <%  %><C-\><C-O>3h
-" inoremap <leader>. <%=  %><C-\><C-O>3h
-" inoremap <leader># <%#  %><C-\><C-O>3h
-
-" Jump to the last position when reopening a file
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
-
-" The following are commented out as they cause vim to behave a lot
-" differently from regular Vi. They are highly recommended though.
-set showcmd             " Show (partial) command in status line.
-set showmatch           " Show matching brackets.
-set ignorecase          " Do case insensitive matching
-set smartcase           " Do smart case matching
-set incsearch           " Incremental search
-set autowrite           " Automatically save before commands like :next and :make
-set hidden              " Hide buffers when they are abandoned
-set mouse=a             " Enable mouse usage (all modes)
-set tabstop=2           " a tab is two spaces
-set backspace=indent,eol,start
-                        " allow backspacing over everything in insert mode
-"set autoindent          " always set autoindenting on
-"set copyindent          " copy the previous indentation on autoindenting
-set number              " always show line numbers
-set shiftwidth=2        " number of spaces to use for autoindenting
-set expandtab						" Spaces instad of tabs
-set shiftround          " use multiple of shiftwidth when indenting with '<' and '>'
-" set smarttab            " insert tabs on the start of a line according to
-		        "    shiftwidth, not tabstop
-set hlsearch            " highlight search terms
-set foldmethod=indent " Create folds based on syntax
-set foldlevelstart=99 " Folds are not closed to start
-set pastetoggle=<F2> " Paste mode
-
-" Redraw/refresh
-map <F5> :redraw!<CR>:AirlineRefresh<CR>
-
-" Source a global configuration file if available
-if filereadable("/etc/vim/vimrc.local")
-  source /etc/vim/vimrc.local
-endif
-
-" Change cursor when changing modes
-if has("autocmd")
-	" Change cursor
-  "au InsertEnter * silent execute "!gconftool-2 --type string --set /apps/gnome-terminal/profiles/Default/cursor_shape ibeam"
-  "au InsertLeave * silent execute "!gconftool-2 --type string --set /apps/gnome-terminal/profiles/Default/cursor_shape block"
-  "au VimLeave * silent execute "!gconftool-2 --type string --set /apps/gnome-terminal/profiles/Default/cursor_shape ibeam"
-  " Redraw screen on window focus
-"  au FocusGained * :redraw!
-endif
-
-" Unlock 256 colors
-if $COLORTERM == 'gnome-terminal'
-	set t_Co=256
-endif
-
-" Long line nav
-nnoremap j gj
-nnoremap k gk
-
-" Colorscheme
-colorscheme monokai
-let g:rehash256 = 1
-colorscheme	molokai
-hi MatchParen cterm=none ctermbg=234 ctermfg=202
-
-" Nerd Tree
-map <C-n> :NERDTreeToggle<CR>
-
-" Airline
-set laststatus=2
-set timeoutlen=1000 ttimeoutlen=0
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#branch#enabled = 1
-let g:airline_powerline_fonts = 1
-if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
-endif
-let g:airline_theme = 'powerlineish'
-
-" delimitMate
-let delimitMate_jump_expansion = 1
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
-let delimitMate_smart_matchpairs = 1
-let g:ycm_key_invoke_completion = ''
-imap <Nul> <Plug>delimitMateS-Tab
-
-" c.vim
-let g:C_Ctrl_j = 'off'
-let g:C_CExtension = 'c'
-let g:C_CCompiler = 'clang'
-let g:C_CFlags = '-O1 -g -c -fno-omit-frame-pointer -fsanitize=address -std=c99'
-let g:C_LFlags = '-O1 -g -Wall -fno-omit-frame-pointer -fsanitize=address -std=c99'
-let g:C_CplusCompiler = 'g++'
-let g:C_VimCompilerName = 'g++'
-
-" YouCompleteMe
-let g:ycm_global_ycm_extra_conf = '~/.vim/ycm.py'
-let g:ycm_extra_conf_vim_data = ['&filetype']
-" Apply fixit
-map <leader>fi :YcmCompleter FixIt<CR> 
-
-" Clear search on return
-nnoremap <CR> :noh<CR><CR>
-
-" Splits
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-set splitbelow
-set splitright
-
-" Sessions
-"set ssop-=options    " do not store global and local values in a session
-"set ssop-=folds      " do not store folds
-
-" Startify
-function! s:filter_header(lines) abort
-    let longest_line   = max(map(copy(a:lines), 'len(v:val)'))
-    let centered_lines = map(copy(a:lines),
-        \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
-    return centered_lines
-endfunction
-let g:startify_session_persistence = 1
-let g:startify_custom_header =
-          \ map(s:filter_header(split(system("bash -c 'fortune | cowsay -f $(ls /usr/share/cows/ | shuf -n1)'"), '\n')), '"   ". v:val') + ['']
-let g:startify_list_order = [
-            \ ['   Bookmarks'],
-            \ 'bookmarks',
-            \ ['   Sessions'],
-            \ 'sessions',
-            \ ]
-let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
-
-" Marmoset
 let g:Course="cs246"
 
 function! MarmosetSubmit(...)
@@ -397,39 +406,3 @@ command! -nargs=? Submit call MarmosetSubmit(<f-args>)
 command! Fetch call MarmosetFetch()
 command! Long call MarmosetLong()
 command! Release call MarmosetRelease()
-
-" Automatically open, but do not go to (if there are errors) the quickfix /
-" location list window, or close it when is has become empty.
-"
-" Note: Must allow nesting of autocmds to enable any customizations for quickfix
-" buffers.
-" Note: Normally, :cwindow jumps to the quickfix window if the command opens it
-" (but not if it's already open). However, as part of the autocmd, this doesn't
-" seem to happen.
-autocmd QuickFixCmdPost [^l]* nested cwindow
-autocmd QuickFixCmdPost    l* nested lwindow
-
-" Compile Directory
-function! CompileDir()
-	set wig=*.h,*_exe*,tests,*.txt
-	let l:filePaths = substitute(globpath('%:p:h','*'), "\n", " ", "g")
-	set wig=
-	let l:command1 = "!clang " . g:C_LFlags . " " .  l:filePaths . " -o " . expand('%:p:r') . "_exe"
-	execute l:command1
-endfunction
-
-function! RunDir()
-	execute "!" . expand('%:p:r') . "_exe"
-endfunction
-
-function! RunFile()
-	execute "silent !chmod u=rwx " . expand('%:p')
-	execute "!" . expand('%:p')
-endfunction
-
-command! CompileDir call CompileDir()
-command! RunDir call RunDir()
-command! RunFile call RunFile()
-map <F7> :CompileDir<CR>
-map <F8> :w<CR>:RunDir<CR>
-map <leader>r :w<CR>:RunFile<CR>

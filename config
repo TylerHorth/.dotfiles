@@ -163,10 +163,11 @@ bar {
         tray_output primary
 }
 
-bindsym grave exec guake -t
+bindsym $mod+grave exec guake -t
 
 # Window mode
 for_window [title="Guake!"] floating enable
 
 # Startup
 exec guake
+exec xset r rate 200 35
