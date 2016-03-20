@@ -43,9 +43,10 @@ Plug 'lervag/vimtex'
 Plug 'moll/vim-node'
 Plug 'jelera/vim-javascript-syntax'
 Plug 'pangloss/vim-javascript'
-Plug 'nathanaelkane/vim-indent-guides'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
 Plug 'sjl/badwolf'
+Plug 'scrooloose/syntastic'
+Plug 'airblade/vim-gitgutter'
 
 call plug#end()     
 
@@ -53,6 +54,11 @@ call plug#end()
 " ---------------------------------------- 
 "                SETTINGS 
 " ---------------------------------------- 
+
+" -------------- COLORSCHEME -------------
+
+colorscheme	badwolf
+
 
 " -------------- LETS --------------------
 
@@ -87,6 +93,7 @@ set grepprg=ag\ --vimgrep\ $*     " Use ag instead of grep
 set grepformat=%f:%l:%c:%m        " Set grepformat for ag 
 set splitbelow                    " Default to split below current window
 set splitright                    " Default to split on the right of window
+set updatetime=250                " Reduce update time from 4 seconds
 
 
 " -------------- MAPS --------------------
@@ -108,12 +115,18 @@ nmap <silent> <leader>ss :w<CR>
 nmap <silent> <leader>wq :wq<CR>
 
 " New lines from normal mode
-nmap <leader>k O<Esc>j
-nmap <leader>j o<Esc>k
+nnoremap <leader>k O<Esc>j
+nnoremap <leader>j o<Esc>k
 
-" Line up / Line down from insert
-inoremap <C-J> <C-O>o
-inoremap <C-K> <C-O>O
+" New lines from normal mode
+inoremap <leader>j <C-O>o
+inoremap <leader>k <C-O>O
+
+" Navigation from insert
+inoremap <C-J> <Down>
+inoremap <C-K> <Up>
+inoremap <C-H> <Left>
+inoremap <C-L> <Right>
 
 " paste from insert
 imap <C-p> <C-O>p
@@ -137,11 +150,6 @@ nmap <Nul> /[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>
 imap <Nul> <Esc>/[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>a
 
 
-" -------------- COLORSCHEME -------------
-
-colorscheme	badwolf
-
-
 " -------------- AUTOCMD -----------------
 
 " Automatically open, but do not go to (if there are errors) the quickfix /
@@ -162,18 +170,7 @@ endif
 " -------------- ctrlp.vim --------------- 
 
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
-let g:ctrlp_user_command = {
-      \ 'types': {
-      \ 1: ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard'],
-      \ 2: ['.hg', 'hg --cwd %s locate -I .'],
-      \ },
-      \ 'fallback': 'ag %s -l --nocolor --nogroup --hidden',
-      \ 'ignore': 1
-      \ }
-let g:ctrlp_custom_ignore = {
-      \ 'dir':  '\.git$\|\.yardoc\|public$|log\|tmp$',
-      \ 'file': '\.so$\|\.bak$|\.swp$|\.dat$|\.DS_Store$'
-      \ }
+let g:ctrlp_user_command = 'ag %s --nocolor --nogroup -g ""'
 let g:ctrlp_use_caching = 1 
 let g:ctrlp_clear_cache_on_exit = 1
 let g:ctrlp_working_path_mode = 'ra'
@@ -288,6 +285,24 @@ nmap [p <plug>EasyClipSwapPasteBackwards
 let g:tern_show_argument_hints = 'on_move' 
 let g:tern_show_signature_in_pum = 1
 
+
+" -------------- tern_for_vim ------------
+
+let g:syntastic_javascript_checkers = [ "eslint" ]
+
+let g:syntastic_mode_map = {
+      \ "mode": "passive",
+      \ "active_filetypes": [ "ruby", "eruby", "javascript", "coffeescript" ],
+      \ "passive_filetypes": [ ] }
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 2
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
 
 " ---------------------------------------- 
 "                FUNCTIONS
