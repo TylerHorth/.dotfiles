@@ -132,6 +132,10 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
+" Jump to next open/close bracket
+nmap <Nul> /[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>
+imap <Nul> <Esc>/[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>a
+
 
 " -------------- COLORSCHEME -------------
 
@@ -197,18 +201,21 @@ map <C-n> :NERDTreeToggle<CR>
 
 " -------------- delimitMate -------------
 
-let delimitMate_jump_expansion = 1
 let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
 let delimitMate_smart_matchpairs = 1
-let g:ycm_key_invoke_completion = ''
-imap <Nul> <Plug>delimitMateS-Tab
 
 
 " -------------- YouCompleteMe -----------
 
 let g:ycm_global_ycm_extra_conf = '~/.vim/ycm.py'
 let g:ycm_extra_conf_vim_data = ['&filetype']
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_key_invoke_completion = ''
+let g:ycm_filepath_completion_use_working_dir = 1
 map <leader>fi :YcmCompleter FixIt<CR> 
 
 
@@ -275,6 +282,11 @@ let g:EasyClipUsePasteToggleDefaults = 0
 nmap ]p <plug>EasyClipSwapPasteForward
 nmap [p <plug>EasyClipSwapPasteBackwards
 
+
+" -------------- tern_for_vim ------------
+
+let g:tern_show_argument_hints = 'on_move' 
+let g:tern_show_signature_in_pum = 1
 
 
 " ---------------------------------------- 
