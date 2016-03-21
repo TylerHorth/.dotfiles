@@ -296,7 +296,7 @@ let g:syntastic_javascript_checkers = [ "eslint" ]
 
 let g:syntastic_mode_map = {
       \ "mode": "passive",
-      \ "active_filetypes": [ "ruby", "eruby", "javascript", "coffeescript" ],
+      \ "active_filetypes": [ "javascript" ],
       \ "passive_filetypes": [ ] }
 
 set statusline+=%#warningmsg#
