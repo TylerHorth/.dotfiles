@@ -180,6 +180,7 @@ let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
 
 " -------------- vim-airline -------------
 
+let g:airline_theme='badwolf'
 map <F5> :redraw!<CR>:AirlineRefresh<CR>
 set laststatus=2
 set timeoutlen=1000 ttimeoutlen=0
@@ -213,6 +214,9 @@ let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_key_invoke_completion = ''
 let g:ycm_filepath_completion_use_working_dir = 1
+let g:ycm_error_symbol = '!'
+let g:ycm_allow_changing_updatetime = 0
+let g:ycm_collect_identifiers_from_tags_files = 1
 map <leader>fi :YcmCompleter FixIt<CR> 
 
 
@@ -286,7 +290,7 @@ let g:tern_show_argument_hints = 'on_move'
 let g:tern_show_signature_in_pum = 1
 
 
-" -------------- tern_for_vim ------------
+" -------------- syntastic ---------------
 
 let g:syntastic_javascript_checkers = [ "eslint" ]
 
@@ -303,6 +307,12 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 2
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+let g:syntastic_warning_symbol = "❗❗"
+let g:syntastic_error_symbol = '❌'
+
+highlight SyntasticErrorSign ctermfg=196
+highlight SyntasticWarningSign ctermfg=214
+
 
 " ---------------------------------------- 
 "                FUNCTIONS
