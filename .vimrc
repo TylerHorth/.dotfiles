@@ -32,7 +32,6 @@ Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
 Plug 'mattn/emmet-vim', { 'for': [ 'html', 'eruby' ] }
 Plug 'tpope/vim-fugitive'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
-Plug 'Valloric/MatchTagAlways', { 'for': [ 'html', 'eruby' ] }
 Plug 'tomtom/tcomment_vim'
 Plug 'nixprime/cpsm', { 'do': './install.sh' }
 Plug 'idanarye/vim-merginal'
@@ -41,12 +40,14 @@ Plug 'tpope/vim-repeat'
 Plug 'svermeulen/vim-easyclip'
 Plug 'lervag/vimtex'
 Plug 'moll/vim-node'
-Plug 'jelera/vim-javascript-syntax'
-Plug 'pangloss/vim-javascript'
+Plug 'othree/yajs.vim'
+Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
-Plug 'sjl/badwolf'
 Plug 'scrooloose/syntastic'
 Plug 'airblade/vim-gitgutter'
+Plug 'xolox/vim-misc'
+Plug 'morhetz/gruvbox'
+Plug 'ap/vim-css-color'
 
 call plug#end()     
 
@@ -54,11 +55,6 @@ call plug#end()
 " ---------------------------------------- 
 "                SETTINGS 
 " ---------------------------------------- 
-
-" -------------- COLORSCHEME -------------
-
-colorscheme	badwolf
-
 
 " -------------- LETS --------------------
 
@@ -94,6 +90,13 @@ set grepformat=%f:%l:%c:%m        " Set grepformat for ag
 set splitbelow                    " Default to split below current window
 set splitright                    " Default to split on the right of window
 set updatetime=250                " Reduce update time from 4 seconds
+
+
+" -------------- COLORSCHEME -------------
+
+let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_sign_column = 'bg0'
+colorscheme	gruvbox
 
 
 " -------------- MAPS --------------------
@@ -146,8 +149,23 @@ nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
 " Jump to next open/close bracket
-nmap <Nul> /[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>
-imap <Nul> <Esc>/[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>a
+" nmap <Nul> /[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>
+" imap <Nul> <Esc>/[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>a
+
+" Intelligently expand brackets and xml tags on enter
+inoremap <expr> <CR> SmartEnter()
+
+" Jump to next closest bracket, comma, quote, etc.
+inoremap <expr> <Nul> SmartJump()
+nnoremap <expr> <Nul> SmartJump()
+
+
+" -------------- COMMANDS ----------------
+
+command! -nargs=? Submit call MarmosetSubmit(<f-args>)
+command! Fetch call MarmosetFetch()
+command! Long call MarmosetLong()
+command! Release call MarmosetRelease()
 
 
 " -------------- AUTOCMD -----------------
@@ -180,7 +198,6 @@ let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
 
 " -------------- vim-airline -------------
 
-let g:airline_theme='badwolf'
 map <F5> :redraw!<CR>:AirlineRefresh<CR>
 set laststatus=2
 set timeoutlen=1000 ttimeoutlen=0
@@ -253,6 +270,7 @@ nmap ga <Plug>(EasyAlign)
 
 " -------------- emmet-vim ---------------
 
+let g:user_emmet_complete_tag = 1
 let g:user_emmet_leader_key = '<C-e>'
 imap <leader><Tab> <plug>(emmet-expand-abbr)
 map  <leader>u     <plug>(emmet-update-tag)
@@ -292,11 +310,13 @@ let g:tern_show_signature_in_pum = 1
 
 " -------------- syntastic ---------------
 
-let g:syntastic_javascript_checkers = [ "eslint" ]
+let g:syntastic_ruby_checkers = [ "mri" ]
+let g:syntastic_coffee_checkers = [ "coffeelint" ]
+let g:syntastic_scss_checkers = [ "scss_lint" ]
 
 let g:syntastic_mode_map = {
       \ "mode": "passive",
-      \ "active_filetypes": [ "javascript" ],
+      \ "active_filetypes": [ "ruby", "coffee", "scss" ],
       \ "passive_filetypes": [ ] }
 
 set statusline+=%#warningmsg#
@@ -308,16 +328,19 @@ let g:syntastic_auto_loc_list = 2
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_warning_symbol = "!"
-let g:syntastic_error_symbol = '❌'
+let g:syntastic_style_warning_symbol = "!"
+let g:syntastic_style_error_symbol = 'X'
+let g:syntastic_error_symbol = 'X'
 
-highlight SyntasticErrorSign ctermfg=196
-highlight SyntasticWarningSign ctermfg=214 cterm=bold
+
+" -------------- javascript-libraries ----
+
+let g:used_javascript_libs = 'jquery'
 
 
 " ---------------------------------------- 
 "                FUNCTIONS
 " ---------------------------------------- 
-
 
 " -------------- SmartEnter --------------
 
@@ -393,8 +416,6 @@ function! TagExpander(next)
   endif
 endfunction
 
-inoremap <expr> <CR> SmartEnter()
-
 
 " -------------- Marmoset ----------------
 
@@ -437,7 +458,28 @@ function! MarmosetRelease()
 	end
 endfunction
 
-command! -nargs=? Submit call MarmosetSubmit(<f-args>)
-command! Fetch call MarmosetFetch()
-command! Long call MarmosetLong()
-command! Release call MarmosetRelease()
+
+" -------------- SmartJump ---------------
+
+function! SmartJump()
+  let curLine = 0
+  while 1
+    let index = 100000
+    for c in ['[', ']', '{', '}', '(', ')', '"', "'", '<', '>', ',']
+      let line = getline(line('.') + curLine)
+      let i = index(split(line, '\zs')[col('.')+1:], c) 
+      if i != -1 
+        let index = min([i + col('.') + 1, index])
+      endif
+    endfor
+    if index != 100000
+      if curLine > 0
+        return curLine . 'G' . index . '|'
+      else
+        return index . "|"
+      endif
+    else
+      let curLine = curLine + 1
+    endif
+  endwhile
+endfunction
