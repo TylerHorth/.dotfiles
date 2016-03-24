@@ -148,16 +148,12 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-" Jump to next open/close bracket
-" nmap <Nul> /[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>
-" imap <Nul> <Esc>/[\[\(\<\{\]\)\>\}\"\'\`]<CR>:noh<CR>a
-
 " Intelligently expand brackets and xml tags on enter
 inoremap <expr> <CR> SmartEnter()
 
 " Jump to next closest bracket, comma, quote, etc.
-inoremap <expr> <Nul> SmartJump()
 nnoremap <expr> <Nul> SmartJump()
+imap <Nul> <Esc><Nul>a
 
 
 " -------------- COMMANDS ----------------
@@ -461,25 +457,34 @@ endfunction
 
 " -------------- SmartJump ---------------
 
+function! IsJumpChar(c)
+  if index(['[', ']', '{', '}', '(', ')', '"', "'", '<', '>', ','], a:c) >= 0
+    return 1
+  else
+    return 0
+  endif
+endfunction
+
 function! SmartJump()
-  let curLine = 0
+  let x = col('.')
+  let y = line('.')
   while 1
-    let index = 100000
-    for c in ['[', ']', '{', '}', '(', ')', '"', "'", '<', '>', ',']
-      let line = getline(line('.') + curLine)
-      let i = index(split(line, '\zs')[col('.')+1:], c) 
-      if i != -1 
-        let index = min([i + col('.') + 1, index])
-      endif
-    endfor
-    if index != 100000
-      if curLine > 0
-        return curLine . 'G' . index . '|'
-      else
-        return index . "|"
-      endif
-    else
-      let curLine = curLine + 1
+    if y == line('$')
+      return 'G'
     endif
+    let line = split(getline(y), '\zs')
+    let len = len(line)
+    while x < len
+      if IsJumpChar(line[x])
+        if y == line('.')
+          return x + 1 . '|'
+        else
+          return y . 'G' . (x + 1) . '|'
+        endif
+      endif
+      let x = x + 1
+    endwhile
+    let x = 0
+    let y = y + 1
   endwhile
 endfunction
