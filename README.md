@@ -10,7 +10,6 @@ git clone --recursive https://github.com/TylerHorth/.dotfiles
 ```bash
 # Create symbolic links
 ln -s ~/.dotfiles/.vimrc ~/.vimrc
-ln -s ~/.dotfiles/.vim ~/.vim
 # Install plugins
 vim +PlugInstall +qall
 ```
