@@ -102,58 +102,58 @@ colorscheme	gruvbox
 " -------------- MAPS --------------------
 
 " buffer nav
-nnoremap L :bn<CR>
-nnoremap H :bN<CR>
-nnoremap J gT
-nnoremap K gt
+nnoremap L          :bn<CR>
+nnoremap H          :bN<CR>
+nnoremap J          gT
+nnoremap K          gt
 nnoremap <leader>qq :bd<CR>
 nnoremap <leader>qw :q<CR>
 nnoremap <leader>qa :qa<CR>
 
 " Quickly edit/reload the vimrc file
-nmap <silent> <leader>ev :e $MYVIMRC<CR>
-nmap <silent> <leader>sv :so $MYVIMRC<CR>
-nmap <silent> <leader>ww :w<CR>
-nmap <silent> <leader>ss :w<CR>
-nmap <silent> <leader>wq :wq<CR>
+nmap     <silent>   <leader>ev  :e  $MYVIMRC<CR>
+nmap     <silent>   <leader>sv  :so $MYVIMRC<CR>
+nmap     <silent>   <leader>ww  :w<CR>
+nmap     <silent>   <leader>ss  :w<CR>
+nmap     <silent>   <leader>wq  :wq<CR>
 
 " New lines from normal mode
-nnoremap <leader>k O<Esc>j
-nnoremap <leader>j o<Esc>k
+nnoremap <leader>k  O<Esc>j
+nnoremap <leader>j  o<Esc>k
 
 " New lines from normal mode
-inoremap <leader>j <C-O>o
-inoremap <leader>k <C-O>O
+inoremap <leader>j  <C-O>o
+inoremap <leader>k  <C-O>O
 
 " Navigation from insert
-inoremap <C-J> <Down>
-inoremap <C-K> <Up>
-inoremap <C-H> <Left>
-inoremap <C-L> <Right>
+inoremap <C-J>      <Down>
+inoremap <C-K>      <Up>
+inoremap <C-H>      <Left>
+inoremap <C-L>      <Right>
 
 " paste from insert
-imap <C-p> <C-O>p
-imap <C-S-p> <C-O>P
+imap     <C-p>      <C-O>p
+imap     <C-S-p>    <C-O>P
 
 " Long line nav
-nnoremap j gj
-nnoremap k gk
+nnoremap j          gj
+nnoremap k          gk
 
 " Clear search on return
-nnoremap <CR> :noh<CR><CR>
+nnoremap <CR>       :noh<CR><CR>
 
 " Splits
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+nnoremap <C-J>      <C-W><C-J>
+nnoremap <C-K>      <C-W><C-K>
+nnoremap <C-L>      <C-W><C-L>
+nnoremap <C-H>      <C-W><C-H>
 
 " Intelligently expand brackets and xml tags on enter
-inoremap <expr> <CR> SmartEnter()
+inoremap <expr>     <CR>        SmartEnter()
 
 " Jump to next closest bracket, comma, quote, etc.
-nnoremap <expr> <Nul> SmartJump()
-imap <Nul> <Esc><Nul>a
+nnoremap <expr>     <Nul>       SmartJump()
+imap     <Nul>      <Esc><Nul>a
 
 
 " -------------- COMMANDS ----------------
