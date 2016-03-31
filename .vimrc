@@ -18,7 +18,7 @@ Plug 'kien/ctrlp.vim'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree'
 Plug 'Raimondi/delimitMate'
 Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --clang-complete' }
@@ -48,6 +48,10 @@ Plug 'airblade/vim-gitgutter'
 Plug 'xolox/vim-misc'
 Plug 'morhetz/gruvbox'
 Plug 'ap/vim-css-color'
+Plug 'gioele/vim-autoswap'
+Plug 'rhysd/clever-f.vim'
+Plug 'mxw/vim-jsx'
+Plug 'terryma/vim-multiple-cursors'
 
 call plug#end()     
 
@@ -56,13 +60,9 @@ call plug#end()
 "                SETTINGS 
 " ---------------------------------------- 
 
-" -------------- LETS --------------------
+" -------------- GENERAL -----------------
 
-let mapleader=","                 " Mapleader            
-
-
-" -------------- SETS --------------------
-
+let mapleader=','                 " Mapleader            
 set showcmd                       " Show (partial) command in status line.
 set showmatch                     " Show matching brackets.
 set ignorecase                    " Do case insensitive matching
@@ -90,16 +90,19 @@ set grepformat=%f:%l:%c:%m        " Set grepformat for ag
 set splitbelow                    " Default to split below current window
 set splitright                    " Default to split on the right of window
 set updatetime=250                " Reduce update time from 4 seconds
+set nowrap                        " Dont wrap lines
+set shell=bash
 
 
 " -------------- COLORSCHEME -------------
 
 let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_vert_split = 'bg1'
 let g:gruvbox_sign_column = 'bg0'
 colorscheme	gruvbox
 
 
-" -------------- MAPS --------------------
+" -------------- MAPPINGS ----------------
 
 " buffer nav
 nnoremap L          :bn<CR>
@@ -109,10 +112,14 @@ nnoremap K          gt
 nnoremap <leader>qq :bd<CR>
 nnoremap <leader>qw :q<CR>
 nnoremap <leader>qa :qa<CR>
+nnoremap <leader>qh <C-W><C-H>:q<CR>
+nnoremap <leader>qj <C-W><C-J>:q<CR>
+nnoremap <leader>qk <C-W><C-K>:q<CR>
+nnoremap <leader>ql <C-W><C-L>:q<CR>
 
 " Quickly edit/reload the vimrc file
 nmap     <silent>   <leader>ev  :e  $MYVIMRC<CR>
-nmap     <silent>   <leader>sv  :so $MYVIMRC<CR>
+nmap     <silent>   <leader>sv  :so $MYVIMRC<CR><F5>
 nmap     <silent>   <leader>ww  :w<CR>
 nmap     <silent>   <leader>ss  :w<CR>
 nmap     <silent>   <leader>wq  :wq<CR>
@@ -140,20 +147,26 @@ nnoremap j          gj
 nnoremap k          gk
 
 " Clear search on return
-nnoremap <CR>       :noh<CR><CR>
+noremap <CR>        :noh<CR><CR>
 
 " Splits
-nnoremap <C-J>      <C-W><C-J>
-nnoremap <C-K>      <C-W><C-K>
-nnoremap <C-L>      <C-W><C-L>
-nnoremap <C-H>      <C-W><C-H>
+noremap <C-J>       <C-W><C-J>
+noremap <C-K>       <C-W><C-K>
+noremap <C-L>       <C-W><C-L>
+noremap <C-H>       <C-W><C-H>
 
 " Intelligently expand brackets and xml tags on enter
 inoremap <expr>     <CR>        SmartEnter()
 
 " Jump to next closest bracket, comma, quote, etc.
-nnoremap <expr>     <Nul>       SmartJump()
+noremap <expr>      <Nul>       SmartJump()
 imap     <Nul>      <Esc><Nul>a
+
+" ; -> :
+noremap ; :
+
+" Marks use m
+noremap gm m
 
 
 " -------------- COMMANDS ----------------
@@ -168,13 +181,17 @@ command! Release call MarmosetRelease()
 
 " Automatically open, but do not go to (if there are errors) the quickfix /
 " location list window, or close it when is has become empty.
-autocmd QuickFixCmdPost [^l]* nested cwindow
-autocmd QuickFixCmdPost    l* nested lwindow
+augroup QuickFix
+  au!
+  au QuickFixCmdPost [^l]* nested cwindow
+  au QuickFixCmdPost    l* nested lwindow
+augroup END
 
 " Jump to the last position when reopening a file
-if has("autocmd")
+augroup PersistCursorPos
+  au!
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
+augroup END
 
 
 " ---------------------------------------- 
@@ -190,6 +207,7 @@ let g:ctrlp_clear_cache_on_exit = 1
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_lazy_update = 0 
 let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
+nnoremap <C-T> :CtrlPTag<CR>
 
 
 " -------------- vim-airline -------------
@@ -291,8 +309,9 @@ nmap <leader>m :Merginal<CR>
 
 " -------------- vim-easyclip ------------
 
-let g:EasyClipAutoFormat = 1
-let g:EasyClipUseSubstituteDefaults = 1 
+let g:EasyClipAutoFormat             = 1
+let g:EasyClipUseSubstituteDefaults  = 1
+let g:EasyClipUseCutDefaults         = 1
 let g:EasyClipUsePasteToggleDefaults = 0
 nmap ]p <plug>EasyClipSwapPasteForward
 nmap [p <plug>EasyClipSwapPasteBackwards
@@ -331,7 +350,36 @@ let g:syntastic_error_symbol = 'X'
 
 " -------------- javascript-libraries ----
 
-let g:used_javascript_libs = 'jquery'
+let g:used_javascript_libs = 'jquery,react,flux'
+
+
+" -------------- vim-gitgutter -----------
+
+let g:gitgutter_sign_column_always = 1
+
+
+" -------------- clever-f.vim ------------
+
+let g:clever_f_chars_match_any_signs = ';'
+
+" -------------- vim-jsx -----------------
+
+let g:jsx_ext_required = 0
+
+
+" -------------- vimtex ------------------
+
+let g:vimtex_latexmk_options = '-pdf -shell-escape'
+
+
+" -------------- vim-multiple-cursors ----
+
+let g:multi_cursor_exit_from_insert_mode = 0
+let g:multi_cursor_use_default_mapping = 0
+let g:multi_cursor_next_key='<C-f>'
+let g:multi_cursor_prev_key='<C-b>'
+let g:multi_cursor_skip_key='<C-x>'
+let g:multi_cursor_quit_key='<Esc>'
 
 
 " ---------------------------------------- 
@@ -469,18 +517,14 @@ function! SmartJump()
   let x = col('.')
   let y = line('.')
   while 1
-    if y == line('$')
-      return 'G'
+    if y > line('$')
+      return 'j$'
     endif
     let line = split(getline(y), '\zs')
     let len = len(line)
     while x < len
       if IsJumpChar(line[x])
-        if y == line('.')
-          return x + 1 . '|'
-        else
-          return y . 'G' . (x + 1) . '|'
-        endif
+        return y . 'G' . (x + 1) . '|'
       endif
       let x = x + 1
     endwhile
