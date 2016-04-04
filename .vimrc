@@ -27,9 +27,8 @@ Plug 'mhinz/vim-startify'
 Plug 'vim-ruby/vim-ruby', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'tpope/vim-rails', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'tpope/vim-bundler', { 'for': [ 'eruby', 'ruby' ] }
-Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
-Plug 'mattn/emmet-vim', { 'for': [ 'html', 'eruby' ] }
+Plug 'mattn/emmet-vim', { 'for': [ 'html', 'eruby', 'markdown' ] }
 Plug 'tpope/vim-fugitive'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
 Plug 'tomtom/tcomment_vim'
@@ -49,9 +48,9 @@ Plug 'xolox/vim-misc'
 Plug 'morhetz/gruvbox'
 Plug 'ap/vim-css-color'
 Plug 'gioele/vim-autoswap'
-Plug 'rhysd/clever-f.vim'
 Plug 'mxw/vim-jsx'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'justinmk/vim-sneak'
 
 call plug#end()     
 
@@ -91,7 +90,7 @@ set splitbelow                    " Default to split below current window
 set splitright                    " Default to split on the right of window
 set updatetime=250                " Reduce update time from 4 seconds
 set nowrap                        " Dont wrap lines
-set shell=bash
+set shell=bash                    " Tell vim to use bash shell
 
 
 " -------------- COLORSCHEME -------------
@@ -116,6 +115,10 @@ nnoremap <leader>qh <C-W><C-H>:q<CR>
 nnoremap <leader>qj <C-W><C-J>:q<CR>
 nnoremap <leader>qk <C-W><C-K>:q<CR>
 nnoremap <leader>ql <C-W><C-L>:q<CR>
+
+" normal movement
+nnoremap     gk     H
+nnoremap     gj     L
 
 " Quickly edit/reload the vimrc file
 nmap     <silent>   <leader>ev  :e  $MYVIMRC<CR>
@@ -161,9 +164,6 @@ inoremap <expr>     <CR>        SmartEnter()
 " Jump to next closest bracket, comma, quote, etc.
 noremap <expr>      <Nul>       SmartJump()
 imap     <Nul>      <Esc><Nul>a
-
-" ; -> :
-noremap ; :
 
 " Marks use m
 noremap gm m
@@ -271,11 +271,6 @@ let g:startify_list_order = [
 let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
 
 
-" -------------- vim-easymotion ----------
-
-nmap <leader>fa <Plug>(easymotion-jumptoanywhere)
-
-
 " -------------- vim-easy-align ----------
 
 xmap ga <Plug>(EasyAlign)
@@ -310,11 +305,13 @@ nmap <leader>m :Merginal<CR>
 " -------------- vim-easyclip ------------
 
 let g:EasyClipAutoFormat             = 1
-let g:EasyClipUseSubstituteDefaults  = 1
 let g:EasyClipUseCutDefaults         = 1
 let g:EasyClipUsePasteToggleDefaults = 0
-nmap ]p <plug>EasyClipSwapPasteForward
-nmap [p <plug>EasyClipSwapPasteBackwards
+nmap ]p          <plug>EasyClipSwapPasteForward
+nmap [p          <plug>EasyClipSwapPasteBackwards
+nmap <silent> gs <plug>SubstituteOverMotionMap
+nmap gss         <plug>SubstituteLine
+xmap gs          <plug>XEasyClipPaste
 
 
 " -------------- tern_for_vim ------------
@@ -362,6 +359,7 @@ let g:gitgutter_sign_column_always = 1
 
 let g:clever_f_chars_match_any_signs = ';'
 
+
 " -------------- vim-jsx -----------------
 
 let g:jsx_ext_required = 0
@@ -380,6 +378,31 @@ let g:multi_cursor_next_key='<C-f>'
 let g:multi_cursor_prev_key='<C-b>'
 let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
+
+
+" -------------- vim-sneak ---------------
+
+"replace 'f' with 1-char Sneak
+nmap f <Plug>Sneak_f
+nmap F <Plug>Sneak_F
+xmap f <Plug>Sneak_f
+xmap F <Plug>Sneak_F
+omap f <Plug>Sneak_f
+omap F <Plug>Sneak_F
+"replace 't' with 1-char Sneak
+nmap t <Plug>Sneak_t
+nmap T <Plug>Sneak_T
+xmap t <Plug>Sneak_t
+xmap T <Plug>Sneak_T
+omap t <Plug>Sneak_t
+omap T <Plug>Sneak_T
+"map s to sneak
+nmap s <Plug>Sneak_s
+nmap S <Plug>Sneak_S
+xmap s <Plug>Sneak_s
+xmap S <Plug>Sneak_S
+omap s <Plug>Sneak_s
+omap S <Plug>Sneak_S
 
 
 " ---------------------------------------- 
@@ -506,7 +529,7 @@ endfunction
 " -------------- SmartJump ---------------
 
 function! IsJumpChar(c)
-  if index(['[', ']', '{', '}', '(', ')', '"', "'", '<', '>', ','], a:c) >= 0
+  if index(['[', ']', '{', '}', '(', ')', '"', "'", '<', '>', ',', '`'], a:c) >= 0
     return 1
   else
     return 0
