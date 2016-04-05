@@ -115,17 +115,24 @@ nnoremap <leader>qh <C-W><C-H>:q<CR>
 nnoremap <leader>qj <C-W><C-J>:q<CR>
 nnoremap <leader>qk <C-W><C-K>:q<CR>
 nnoremap <leader>ql <C-W><C-L>:q<CR>
+nnoremap <leader>ww :w<CR>
+nnoremap <leader>ss :w<CR>
+nnoremap <leader>wq :wq<CR>
 
 " normal movement
-nnoremap     gk     H
-nnoremap     gj     L
+noremap  gt         H
+noremap  gb         L
+noremap  gh         25h
+noremap  gj         10j
+noremap  gk         10k
+noremap  gl         25l
+
+" Select last paste
+nnoremap gp `[v`]
 
 " Quickly edit/reload the vimrc file
-nmap     <silent>   <leader>ev  :e  $MYVIMRC<CR>
-nmap     <silent>   <leader>sv  :so $MYVIMRC<CR><F5>
-nmap     <silent>   <leader>ww  :w<CR>
-nmap     <silent>   <leader>ss  :w<CR>
-nmap     <silent>   <leader>wq  :wq<CR>
+nnoremap <silent>   <leader>ev  :e  $MYVIMRC<CR>
+nnoremap <silent>   <leader>sv  :so $MYVIMRC<CR><F5>
 
 " New lines from normal mode
 nnoremap <leader>k  O<Esc>j
@@ -163,10 +170,10 @@ inoremap <expr>     <CR>        SmartEnter()
 
 " Jump to next closest bracket, comma, quote, etc.
 noremap <expr>      <Nul>       SmartJump()
-imap     <Nul>      <Esc><Nul>a
+imap    <Nul>       <Esc><Nul>a
 
-" Marks use m
-noremap gm m
+" Marks
+noremap gm          m
 
 
 " -------------- COMMANDS ----------------
@@ -382,27 +389,12 @@ let g:multi_cursor_quit_key='<Esc>'
 
 " -------------- vim-sneak ---------------
 
-"replace 'f' with 1-char Sneak
-nmap f <Plug>Sneak_f
-nmap F <Plug>Sneak_F
-xmap f <Plug>Sneak_f
-xmap F <Plug>Sneak_F
-omap f <Plug>Sneak_f
-omap F <Plug>Sneak_F
-"replace 't' with 1-char Sneak
-nmap t <Plug>Sneak_t
-nmap T <Plug>Sneak_T
-xmap t <Plug>Sneak_t
-xmap T <Plug>Sneak_T
-omap t <Plug>Sneak_t
-omap T <Plug>Sneak_T
-"map s to sneak
-nmap s <Plug>Sneak_s
-nmap S <Plug>Sneak_S
-xmap s <Plug>Sneak_s
-xmap S <Plug>Sneak_S
-omap s <Plug>Sneak_s
-omap S <Plug>Sneak_S
+nmap f <Plug>Sneak_s
+nmap F <Plug>Sneak_S
+xmap f <Plug>Sneak_s
+xmap F <Plug>Sneak_S
+omap f <Plug>Sneak_s
+omap F <Plug>Sneak_S
 
 
 " ---------------------------------------- 
