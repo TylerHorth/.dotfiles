@@ -28,7 +28,7 @@ Plug 'vim-ruby/vim-ruby', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'tpope/vim-rails', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'tpope/vim-bundler', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
-Plug 'mattn/emmet-vim', { 'for': [ 'html', 'eruby', 'markdown' ] }
+Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
 Plug 'tomtom/tcomment_vim'
@@ -39,18 +39,26 @@ Plug 'tpope/vim-repeat'
 Plug 'svermeulen/vim-easyclip'
 Plug 'lervag/vimtex'
 Plug 'moll/vim-node'
+Plug 'elzr/vim-json'
 Plug 'othree/yajs.vim'
+Plug 'othree/es.next.syntax.vim'
+Plug 'gavocanov/vim-js-indent'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
 Plug 'scrooloose/syntastic'
 Plug 'airblade/vim-gitgutter'
 Plug 'xolox/vim-misc'
 Plug 'morhetz/gruvbox'
-Plug 'ap/vim-css-color'
 Plug 'gioele/vim-autoswap'
 Plug 'mxw/vim-jsx'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'justinmk/vim-sneak'
+Plug 'gabrielelana/vim-markdown'
+Plug 'kana/vim-textobj-user'
+Plug 'vim-scripts/argtextobj.vim'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'digitaltoad/vim-pug'
+Plug 'chrisbra/unicode.vim'
 
 call plug#end()     
 
@@ -91,6 +99,7 @@ set splitright                    " Default to split on the right of window
 set updatetime=250                " Reduce update time from 4 seconds
 set nowrap                        " Dont wrap lines
 set shell=bash                    " Tell vim to use bash shell
+set nocursorline                  " Don't highlight current line
 
 
 " -------------- COLORSCHEME -------------
@@ -127,12 +136,9 @@ noremap  gj         10j
 noremap  gk         10k
 noremap  gl         25l
 
-" Select last paste
-nnoremap gp `[v`]
-
 " Quickly edit/reload the vimrc file
-nnoremap <silent>   <leader>ev  :e  $MYVIMRC<CR>
-nnoremap <silent>   <leader>sv  :so $MYVIMRC<CR><F5>
+nmap     <silent>   <leader>ev  :e  $MYVIMRC<CR>
+nmap     <silent>   <leader>sv  :so $MYVIMRC<CR><F5>
 
 " New lines from normal mode
 nnoremap <leader>k  O<Esc>j
@@ -169,7 +175,9 @@ noremap <C-H>       <C-W><C-H>
 inoremap <expr>     <CR>        SmartEnter()
 
 " Jump to next closest bracket, comma, quote, etc.
-noremap <expr>      <Nul>       SmartJump()
+" -- should update this to use :h search --
+" noremap  <Nul>      :call search('\[()[]{}''"`<>\]', 'W')<CR>
+noremap <expr>      <Nul>       SmartJump() 
 imap    <Nul>       <Esc><Nul>a
 
 " Marks
@@ -286,6 +294,7 @@ nmap ga <Plug>(EasyAlign)
 
 " -------------- emmet-vim ---------------
 
+let g:user_emmet_install_global = 1
 let g:user_emmet_complete_tag = 1
 let g:user_emmet_leader_key = '<C-e>'
 imap <leader><Tab> <plug>(emmet-expand-abbr)
@@ -311,7 +320,6 @@ nmap <leader>m :Merginal<CR>
 
 " -------------- vim-easyclip ------------
 
-let g:EasyClipAutoFormat             = 1
 let g:EasyClipUseCutDefaults         = 1
 let g:EasyClipUsePasteToggleDefaults = 0
 nmap ]p          <plug>EasyClipSwapPasteForward
@@ -389,12 +397,35 @@ let g:multi_cursor_quit_key='<Esc>'
 
 " -------------- vim-sneak ---------------
 
-nmap f <Plug>Sneak_s
-nmap F <Plug>Sneak_S
-xmap f <Plug>Sneak_s
-xmap F <Plug>Sneak_S
-omap f <Plug>Sneak_s
-omap F <Plug>Sneak_S
+nmap s <Plug>Sneak_s
+nmap S <Plug>Sneak_S
+omap s <Plug>Sneak_s
+omap S <Plug>Sneak_S
+
+
+" -------------- vim-textobj-user --------
+
+call textobj#user#plugin('paste', {
+\   '-': {
+\     'select-i-function': 'LastPasteI',
+\     'select-i': 'ig',
+\     'select-a-function': 'LastPasteA',
+\     'select-a': 'ag'
+\   }
+\ })
+
+function! LastPasteI()
+  return ['v', getpos("'["), getpos("']")]
+endfunction
+
+function! LastPasteA()
+  return ['V', getpos("'["), getpos("']")]
+endfunction
+
+
+" -------------- digraphs.vim ------------
+
+map <leader>d vh<F4>
 
 
 " ---------------------------------------- 

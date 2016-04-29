@@ -1,5 +1,6 @@
 # Tyler's dotfiles
-My personal configuration files . . . and stuff.
+> My personal configuration files . . . and stuff.
+
 ## Setup
 ```bash
 # Clone .dotfiles repo and all submodules
@@ -43,6 +44,6 @@ ln -s ~/.dotfiles/.i3status.conf ~/.i3status.conf
 ```
 ----  
 ## To Do
-- Identify dependencies
-- Install script
-- . . . 
+- [ ] Identify dependencies
+- [ ] Install script
+- [ ] . . . 
