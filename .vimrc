@@ -21,7 +21,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
 Plug 'Raimondi/delimitMate'
 Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
-Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --clang-complete' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 Plug 'rdnetto/YCM-Generator', { 'for': [ 'c', 'cpp' ], 'branch': 'stable' }
 Plug 'mhinz/vim-startify'
 Plug 'vim-ruby/vim-ruby', { 'for': [ 'eruby', 'ruby' ] }
@@ -97,7 +97,7 @@ set grepformat=%f:%l:%c:%m        " Set grepformat for ag
 set splitbelow                    " Default to split below current window
 set splitright                    " Default to split on the right of window
 set updatetime=250                " Reduce update time from 4 seconds
-set nowrap                        " Dont wrap lines
+set wrap                          " wrap long lines
 set shell=bash                    " Tell vim to use bash shell
 set nocursorline                  " Don't highlight current line
 
@@ -327,6 +327,7 @@ nmap [p          <plug>EasyClipSwapPasteBackwards
 nmap <silent> gs <plug>SubstituteOverMotionMap
 nmap gss         <plug>SubstituteLine
 xmap gs          <plug>XEasyClipPaste
+map  M           m$
 
 
 " -------------- tern_for_vim ------------
@@ -383,7 +384,20 @@ let g:jsx_ext_required = 0
 " -------------- vimtex ------------------
 
 let g:vimtex_latexmk_options = '-pdf -shell-escape'
-
+let g:vimtex_view_method = 'zathura'
+if !exists('g:ycm_semantic_triggers')
+  let g:ycm_semantic_triggers = {}
+endif
+let g:ycm_semantic_triggers.tex = [
+      \ 're!\\[A-Za-z]*cite[A-Za-z]*(\[[^]]*\]){0,2}{[^}]*',
+      \ 're!\\[A-Za-z]*ref({[^}]*|range{([^,{}]*(}{)?))',
+      \ 're!\\hyperref\[[^]]*',
+      \ 're!\\includegraphics\*?(\[[^]]*\]){0,2}{[^}]*',
+      \ 're!\\(include(only)?|input){[^}]*',
+      \ 're!\\\a*(gls|Gls|GLS)(pl)?\a*(\s*\[[^]]*\]){0,2}\s*\{[^}]*',
+      \ 're!\\includepdf(\s*\[[^]]*\])?\s*\{[^}]*',
+      \ 're!\\includestandalone(\s*\[[^]]*\])?\s*\{[^}]*',
+      \ ]
 
 " -------------- vim-multiple-cursors ----
 

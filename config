@@ -169,5 +169,8 @@ bindsym $mod+grave exec guake -t
 for_window [title="Guake!"] floating enable
 
 # Startup
+exec ~/.screenlayout/screens.sh
+exec /usr/libexec/gnome-settings-daemon
+exec bash ~/.mapcaps.sh
 exec guake
 exec xset r rate 200 35
