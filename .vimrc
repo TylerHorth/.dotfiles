@@ -21,7 +21,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
 Plug 'Raimondi/delimitMate'
 Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
+Plug 'vim-scripts/a.vim'
+Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rdnetto/YCM-Generator', { 'for': [ 'c', 'cpp' ], 'branch': 'stable' }
 Plug 'mhinz/vim-startify'
 Plug 'vim-ruby/vim-ruby', { 'for': [ 'eruby', 'ruby' ] }
@@ -59,6 +61,7 @@ Plug 'vim-scripts/argtextobj.vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'digitaltoad/vim-pug'
 Plug 'chrisbra/unicode.vim'
+Plug 'sunaku/vim-dasht'
 
 call plug#end()     
 
@@ -135,6 +138,11 @@ noremap  gh         25h
 noremap  gj         10j
 noremap  gk         10k
 noremap  gl         25l
+
+" c++ make/run
+map      \m         :silent make\|redraw!\|cc<CR>
+map      \r         :!valgrind %:p:r<CR>
+map      \\         \m\r
 
 " Quickly edit/reload the vimrc file
 nmap     <silent>   <leader>ev  :e  $MYVIMRC<CR>
@@ -213,6 +221,23 @@ augroup END
 "                PLUGIN OPTIONS 
 " ---------------------------------------- 
 
+" -------------- vim-dasht --------------- 
+" Search API docs for query you type in:
+nnoremap <Leader><Leader>k :Dasht<Space>
+
+" Search API docs for word under cursor:
+nnoremap <silent> <Leader><Leader>K :call Dasht([expand('<cWORD>'), expand('<cword>')])<Return>
+
+" Search API docs for the selected text:
+vnoremap <silent> <Leader><Leader>K y:<C-U>call Dasht(getreg(0))<Return>
+
+let g:dasht_filetype_docsets = {
+      \ 'cpp': ['boost', 'c++', '^c$', 'OpenGL', 'OpenCV_C'],
+      \ 'html': ['css', 'js', 'bootstrap', 'jquery'],
+      \ 'javascript': ['jasmine', 'nodejs', 'grunt', 'gulp', 'jade', 'react'],
+      \ 'python': ['(num|sci)py', 'pandas', 'sqlalchemy', 'twisted', 'jinja'],
+      \ }
+
 " -------------- ctrlp.vim --------------- 
 
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
@@ -248,6 +273,8 @@ map <C-n> :NERDTreeToggle<CR>
 let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
 let delimitMate_smart_matchpairs = 1
+au FileType tex let b:delimitMate_quotes = "\" ' $"
+au FileType tex inoremap \{ \{\}<left><left>
 
 
 " -------------- YouCompleteMe -----------
@@ -263,7 +290,7 @@ let g:ycm_filepath_completion_use_working_dir = 1
 let g:ycm_error_symbol = '!'
 let g:ycm_allow_changing_updatetime = 0
 let g:ycm_collect_identifiers_from_tags_files = 1
-map <leader>fi :YcmCompleter FixIt<CR> 
+map <leader>fi :YcmCompleter FixIt<CR>:windo if &buftype != "quickfix"\|lclose\|endif<CR>
 
 
 " -------------- vim-startify ------------
@@ -523,7 +550,7 @@ endfunction
 
 " -------------- Marmoset ----------------
 
-let g:Course="cs246"
+let g:Course="cs241"
 
 function! MarmosetSubmit(...)
 	if a:0 > 0
@@ -557,6 +584,7 @@ endfunction
 
 function! MarmosetRelease()
 	if exists("g:Course") && exists("t:Assignment")
+    execute "!marmoset release " . g:Course . " " . t:Assignment
 	else
 		echo "g:Course/t:Assignment not defined! (:h let)"
 	end
@@ -566,7 +594,7 @@ endfunction
 " -------------- SmartJump ---------------
 
 function! IsJumpChar(c)
-  if index(['[', ']', '{', '}', '(', ')', '"', "'", '<', '>', ',', '`'], a:c) >= 0
+  if index(['[', ']', '{', '}', '(', ')', '"', "'", '<', '>', ',', '`', '$'], a:c) >= 0
     return 1
   else
     return 0

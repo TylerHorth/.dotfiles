@@ -30,6 +30,9 @@ font pango:Terminus, 10
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# Default to stacking layout
+workspace_layout tabbed
+
 # start a terminal
 bindsym $mod+Return exec gnome-terminal
 
@@ -170,7 +173,6 @@ for_window [title="Guake!"] floating enable
 
 # Startup
 exec ~/.screenlayout/screens.sh
-exec /usr/libexec/gnome-settings-daemon
 exec bash ~/.mapcaps.sh
 exec guake
 exec xset r rate 200 35
