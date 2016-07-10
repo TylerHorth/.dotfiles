@@ -221,7 +221,13 @@ augroup END
 "                PLUGIN OPTIONS 
 " ---------------------------------------- 
 
+" -------------- a.vim ------------------- 
+
+map \a :A<CR>
+
+
 " -------------- vim-dasht --------------- 
+
 " Search API docs for query you type in:
 nnoremap <Leader><Leader>k :Dasht<Space>
 
@@ -237,6 +243,7 @@ let g:dasht_filetype_docsets = {
       \ 'javascript': ['jasmine', 'nodejs', 'grunt', 'gulp', 'jade', 'react'],
       \ 'python': ['(num|sci)py', 'pandas', 'sqlalchemy', 'twisted', 'jinja'],
       \ }
+
 
 " -------------- ctrlp.vim --------------- 
 
@@ -279,7 +286,6 @@ au FileType tex inoremap \{ \{\}<left><left>
 
 " -------------- YouCompleteMe -----------
 
-let g:ycm_global_ycm_extra_conf = '~/.vim/ycm.py'
 let g:ycm_extra_conf_vim_data = ['&filetype']
 let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
@@ -290,7 +296,8 @@ let g:ycm_filepath_completion_use_working_dir = 1
 let g:ycm_error_symbol = '!'
 let g:ycm_allow_changing_updatetime = 0
 let g:ycm_collect_identifiers_from_tags_files = 1
-map <leader>fi :YcmCompleter FixIt<CR>:windo if &buftype != "quickfix"\|lclose\|endif<CR>
+let g:ycm_confirm_extra_conf = 0
+map <leader>fi :YcmCompleter FixIt<CR>
 
 
 " -------------- vim-startify ------------
@@ -410,7 +417,7 @@ let g:jsx_ext_required = 0
 
 " -------------- vimtex ------------------
 
-let g:vimtex_latexmk_options = '-pdf -shell-escape'
+let g:vimtex_latexmk_options = '-pvc -pdf -latexoption=-shell-escape'
 let g:vimtex_view_method = 'zathura'
 if !exists('g:ycm_semantic_triggers')
   let g:ycm_semantic_triggers = {}
@@ -425,6 +432,11 @@ let g:ycm_semantic_triggers.tex = [
       \ 're!\\includepdf(\s*\[[^]]*\])?\s*\{[^}]*',
       \ 're!\\includestandalone(\s*\[[^]]*\])?\s*\{[^}]*',
       \ ]
+let g:vimtex_syntax_minted = [
+      \ {'lang' : 'c',},
+      \ {'lang' : 'cpp',},
+      \]
+
 
 " -------------- vim-multiple-cursors ----
 
