@@ -35,7 +35,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
 Plug 'tomtom/tcomment_vim'
 Plug 'nixprime/cpsm', { 'do': './install.sh' }
-Plug 'idanarye/vim-merginal'
+Plug 'idanarye/vim-merginal', { 'branch': 'Develop' }
 Plug 'tpope/vim-ragtag'
 Plug 'tpope/vim-repeat'
 Plug 'svermeulen/vim-easyclip'
@@ -46,22 +46,24 @@ Plug 'othree/yajs.vim'
 Plug 'othree/es.next.syntax.vim'
 Plug 'gavocanov/vim-js-indent'
 Plug 'othree/javascript-libraries-syntax.vim'
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
 Plug 'scrooloose/syntastic'
 Plug 'airblade/vim-gitgutter'
 Plug 'xolox/vim-misc'
 Plug 'morhetz/gruvbox'
 Plug 'gioele/vim-autoswap'
-Plug 'mxw/vim-jsx'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'justinmk/vim-sneak'
 Plug 'gabrielelana/vim-markdown'
-Plug 'kana/vim-textobj-user'
-Plug 'vim-scripts/argtextobj.vim'
-Plug 'michaeljsmith/vim-indent-object'
 Plug 'digitaltoad/vim-pug'
 Plug 'chrisbra/unicode.vim'
 Plug 'sunaku/vim-dasht'
+Plug 'wellle/targets.vim'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
+Plug 'sjl/gundo.vim'
+Plug 'yonchu/accelerated-smooth-scroll'
+Plug 'edkolev/tmuxline.vim'
+Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()     
 
@@ -116,8 +118,8 @@ colorscheme	gruvbox
 " -------------- MAPPINGS ----------------
 
 " buffer nav
-nnoremap L          :bn<CR>
-nnoremap H          :bN<CR>
+nnoremap L          :bn<CR><F5>
+nnoremap H          :bN<CR><F5>
 nnoremap J          gT
 nnoremap K          gt
 nnoremap <leader>qq :bd<CR>
@@ -172,12 +174,6 @@ nnoremap k          gk
 
 " Clear search on return
 noremap <CR>        :noh<CR><CR>
-
-" Splits
-noremap <C-J>       <C-W><C-J>
-noremap <C-K>       <C-W><C-K>
-noremap <C-L>       <C-W><C-L>
-noremap <C-H>       <C-W><C-H>
 
 " Intelligently expand brackets and xml tags on enter
 inoremap <expr>     <CR>        SmartEnter()
@@ -310,7 +306,7 @@ function! s:filter_header(lines) abort
 endfunction
 let g:startify_session_persistence = 1
 let g:startify_custom_header =
-      \ map(s:filter_header(split(system("bash -c 'fortune | cowsay -f $(ls /usr/share/cows/ | shuf -n1)'"), '\n')), '"   ". v:val') + ['']
+      \ map(s:filter_header(split(system("bash -c \"fortune | cowsay -f $(ls -1 | python -c 'import sys; import random; print(random.choice(sys.stdin.readlines()).rstrip())';)\""), '\n')), '"   ". v:val') + ['']
 let g:startify_list_order = [
       \ ['   Bookmarks'],
       \ 'bookmarks',
@@ -375,10 +371,11 @@ let g:tern_show_signature_in_pum = 1
 let g:syntastic_ruby_checkers = [ "mri" ]
 let g:syntastic_coffee_checkers = [ "coffeelint" ]
 let g:syntastic_scss_checkers = [ "scss_lint" ]
+let g:syntastic_javascript_checkers = [ "eslint" ]
 
 let g:syntastic_mode_map = {
       \ "mode": "passive",
-      \ "active_filetypes": [ "ruby", "coffee", "scss" ],
+      \ "active_filetypes": [ "ruby", "coffee", "scss", "javascript" ],
       \ "passive_filetypes": [ ] }
 
 set statusline+=%#warningmsg#
@@ -397,7 +394,7 @@ let g:syntastic_error_symbol = 'X'
 
 " -------------- javascript-libraries ----
 
-let g:used_javascript_libs = 'jquery,react,flux'
+let g:used_javascript_libs = 'jquery'
 
 
 " -------------- vim-gitgutter -----------
@@ -408,11 +405,6 @@ let g:gitgutter_sign_column_always = 1
 " -------------- clever-f.vim ------------
 
 let g:clever_f_chars_match_any_signs = ';'
-
-
-" -------------- vim-jsx -----------------
-
-let g:jsx_ext_required = 0
 
 
 " -------------- vimtex ------------------
@@ -456,29 +448,14 @@ omap s <Plug>Sneak_s
 omap S <Plug>Sneak_S
 
 
-" -------------- vim-textobj-user --------
-
-call textobj#user#plugin('paste', {
-\   '-': {
-\     'select-i-function': 'LastPasteI',
-\     'select-i': 'ig',
-\     'select-a-function': 'LastPasteA',
-\     'select-a': 'ag'
-\   }
-\ })
-
-function! LastPasteI()
-  return ['v', getpos("'["), getpos("']")]
-endfunction
-
-function! LastPasteA()
-  return ['V', getpos("'["), getpos("']")]
-endfunction
-
-
 " -------------- digraphs.vim ------------
 
 map <leader>d vh<F4>
+
+
+" -------------- gundo.vim ---------------
+
+nnoremap gu :GundoToggle<CR>
 
 
 " ---------------------------------------- 
