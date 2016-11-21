@@ -1,10 +1,9 @@
 " -------------- vim-plug ----------------
 
-if empty(glob("~/.vim/autoload/plug.vim"))
-    execute 'silent !mkdir -p ~/.vim/plugged'
-    execute 'silent !mkdir -p ~/.vim/autoload'
-    execute 'silent !curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
-    PlugInstall
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
 endif
 
 
@@ -122,7 +121,7 @@ set whichwrap+=<,>,[,]            " Line wrap for arrow keys
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_vert_split = 'bg1'
 let g:gruvbox_sign_column = 'bg0'
-colorscheme	gruvbox
+silent! colorscheme	gruvbox
 
 
 " -------------- MAPPINGS ----------------
