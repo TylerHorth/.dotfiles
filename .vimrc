@@ -19,9 +19,9 @@ Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
-Plug 'Raimondi/delimitMate'
+Plug 'jiangmiao/auto-pairs'
 Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
+Plug 'maralla/completor.vim'
 Plug 'vim-scripts/a.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rdnetto/YCM-Generator', { 'for': [ 'c', 'cpp' ], 'branch': 'stable' }
@@ -35,7 +35,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
 Plug 'tomtom/tcomment_vim'
 Plug 'nixprime/cpsm', { 'do': './install.sh' }
-Plug 'idanarye/vim-merginal', { 'branch': 'Develop' }
 Plug 'tpope/vim-ragtag'
 Plug 'tpope/vim-repeat'
 Plug 'svermeulen/vim-easyclip'
@@ -46,13 +45,12 @@ Plug 'othree/yajs.vim'
 Plug 'othree/es.next.syntax.vim'
 Plug 'gavocanov/vim-js-indent'
 Plug 'othree/javascript-libraries-syntax.vim'
-Plug 'scrooloose/syntastic'
+Plug 'w0rp/ale'
 Plug 'airblade/vim-gitgutter'
 Plug 'xolox/vim-misc'
 Plug 'morhetz/gruvbox'
 Plug 'gioele/vim-autoswap'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'justinmk/vim-sneak'
 Plug 'gabrielelana/vim-markdown'
 Plug 'digitaltoad/vim-pug'
 Plug 'chrisbra/unicode.vim'
@@ -62,8 +60,16 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
 Plug 'sjl/gundo.vim'
 Plug 'yonchu/accelerated-smooth-scroll'
-Plug 'edkolev/tmuxline.vim'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'tmux-plugins/vim-tmux'
+Plug 'metakirby5/codi.vim'
+Plug 'tpope/vim-endwise'
+Plug 'bufonly.vim'
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'dag/vim-fish'
+Plug 'AndrewRadev/switch.vim'
 
 call plug#end()     
 
@@ -74,7 +80,8 @@ call plug#end()
 
 " -------------- GENERAL -----------------
 
-let mapleader=','                 " Mapleader            
+let mapleader=','                 " Mapleader
+let maplocalleader='-'            " Maplocalleader
 set showcmd                       " Show (partial) command in status line.
 set showmatch                     " Show matching brackets.
 set ignorecase                    " Do case insensitive matching
@@ -94,6 +101,7 @@ set foldmethod=indent             " Create folds based on syntax
 set foldlevelstart=99             " Folds are not closed to start
 set pastetoggle=<F2>              " Paste mode
 set t_Co=256                      " Use 256 colors
+set termguicolors                 " True color support
 set noshowmode                    " Don't show current mode
 set clipboard=unnamed,unnamedplus " Merge system and vim clipboards
 set background=dark               " Set background to dark
@@ -105,6 +113,8 @@ set updatetime=250                " Reduce update time from 4 seconds
 set wrap                          " wrap long lines
 set shell=bash                    " Tell vim to use bash shell
 set nocursorline                  " Don't highlight current line
+set ttyfast                       " Speed shit up or something
+set whichwrap+=<,>,[,]            " Line wrap for arrow keys
 
 
 " -------------- COLORSCHEME -------------
@@ -117,11 +127,12 @@ colorscheme	gruvbox
 
 " -------------- MAPPINGS ----------------
 
+" clear search
+nnoremap <leader>/  :noh<CR>
+
 " buffer nav
 nnoremap L          :bn<CR><F5>
 nnoremap H          :bN<CR><F5>
-nnoremap J          gT
-nnoremap K          gt
 nnoremap <leader>qq :bd<CR>
 nnoremap <leader>qw :q<CR>
 nnoremap <leader>qa :qa<CR>
@@ -140,6 +151,12 @@ noremap  gh         25h
 noremap  gj         10j
 noremap  gk         10k
 noremap  gl         25l
+
+" Join lines
+nnoremap K          kJ
+
+" quick macro
+map      Q          @q
 
 " c++ make/run
 map      \m         :silent make\|redraw!\|cc<CR>
@@ -172,17 +189,9 @@ imap     <C-S-p>    <C-O>P
 nnoremap j          gj
 nnoremap k          gk
 
-" Clear search on return
-noremap <CR>        :noh<CR><CR>
-
-" Intelligently expand brackets and xml tags on enter
-inoremap <expr>     <CR>        SmartEnter()
-
 " Jump to next closest bracket, comma, quote, etc.
-" -- should update this to use :h search --
-" noremap  <Nul>      :call search('\[()[]{}''"`<>\]', 'W')<CR>
-noremap <expr>      <Nul>       SmartJump() 
-imap    <Nul>       <Esc><Nul>a
+noremap  <Nul>      :call Jump()<CR><Right>
+inoremap <Nul>      <C-O>:call Jump()<CR><Right>
 
 " Marks
 noremap gm          m
@@ -217,6 +226,16 @@ augroup END
 "                PLUGIN OPTIONS 
 " ---------------------------------------- 
 
+" -------------- switch.vim --------------
+
+let g:switch_mapping = "<leader>."
+
+
+" -------------- auto-pairs --------------
+
+let g:AutoPairsMapCh = 0
+
+
 " -------------- a.vim ------------------- 
 
 map \a :A<CR>
@@ -225,13 +244,13 @@ map \a :A<CR>
 " -------------- vim-dasht --------------- 
 
 " Search API docs for query you type in:
-nnoremap <Leader><Leader>k :Dasht<Space>
+nnoremap <Leader>dk :Dasht<Space>
 
 " Search API docs for word under cursor:
-nnoremap <silent> <Leader><Leader>K :call Dasht([expand('<cWORD>'), expand('<cword>')])<Return>
+nnoremap <silent> <Leader>dK :call Dasht([expand('<cWORD>'), expand('<cword>')])<Return>
 
 " Search API docs for the selected text:
-vnoremap <silent> <Leader><Leader>K y:<C-U>call Dasht(getreg(0))<Return>
+vnoremap <silent> <Leader>dK y:<C-U>call Dasht(getreg(0))<Return>
 
 let g:dasht_filetype_docsets = {
       \ 'cpp': ['boost', 'c++', '^c$', 'OpenGL', 'OpenCV_C'],
@@ -251,6 +270,12 @@ let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_lazy_update = 0 
 let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
 nnoremap <C-T> :CtrlPTag<CR>
+nnoremap <C-G> :CtrlPBuffer<CR>
+
+
+" -------------- easymotion --------------
+
+map <LocalLeader> <Plug>(easymotion-prefix)
 
 
 " -------------- vim-airline -------------
@@ -271,29 +296,10 @@ endif
 map <C-n> :NERDTreeToggle<CR>
 
 
-" -------------- delimitMate -------------
+" -------------- completor.vim -----------
 
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
-let delimitMate_smart_matchpairs = 1
-au FileType tex let b:delimitMate_quotes = "\" ' $"
-au FileType tex inoremap \{ \{\}<left><left>
-
-
-" -------------- YouCompleteMe -----------
-
-let g:ycm_extra_conf_vim_data = ['&filetype']
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_key_invoke_completion = ''
-let g:ycm_filepath_completion_use_working_dir = 1
-let g:ycm_error_symbol = '!'
-let g:ycm_allow_changing_updatetime = 0
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_confirm_extra_conf = 0
-map <leader>fi :YcmCompleter FixIt<CR>
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 
 " -------------- vim-startify ------------
@@ -362,34 +368,15 @@ map  M           m$
 
 " -------------- tern_for_vim ------------
 
-let g:tern_show_argument_hints = 'on_move' 
-let g:tern_show_signature_in_pum = 1
+nnoremap <Leader>t :TernDef<CR>
 
+" -------------- ale ---------------------
 
-" -------------- syntastic ---------------
-
-let g:syntastic_ruby_checkers = [ "mri" ]
-let g:syntastic_coffee_checkers = [ "coffeelint" ]
-let g:syntastic_scss_checkers = [ "scss_lint" ]
-let g:syntastic_javascript_checkers = [ "eslint" ]
-
-let g:syntastic_mode_map = {
-      \ "mode": "passive",
-      \ "active_filetypes": [ "ruby", "coffee", "scss", "javascript" ],
-      \ "passive_filetypes": [ ] }
-
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 2
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_warning_symbol = "!"
-let g:syntastic_style_warning_symbol = "!"
-let g:syntastic_style_error_symbol = 'X'
-let g:syntastic_error_symbol = 'X'
+let g:ale_sign_error = '•'
+let g:ale_sign_warning = '•'
+hi! link ALEErrorSign GruvboxRed
+hi! link ALEWarningSign GruvboxYellow
+let g:ale_sign_column_always = 1
 
 
 " -------------- javascript-libraries ----
@@ -440,14 +427,6 @@ let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
 
 
-" -------------- vim-sneak ---------------
-
-nmap s <Plug>Sneak_s
-nmap S <Plug>Sneak_S
-omap s <Plug>Sneak_s
-omap S <Plug>Sneak_S
-
-
 " -------------- digraphs.vim ------------
 
 map <leader>d vh<F4>
@@ -458,83 +437,16 @@ map <leader>d vh<F4>
 nnoremap gu :GundoToggle<CR>
 
 
-" ---------------------------------------- 
+" -------------- smooth-scroll ----------
+
+let g:ac_smooth_scroll_min_limit_msec = 0
+let g:ac_smooth_scroll_fb_sleep_time_msec = 5
+let g:ac_smooth_scroll_du_sleep_time_msec = 5
+
+
+" ----------------------------------------
 "                FUNCTIONS
-" ---------------------------------------- 
-
-" -------------- SmartEnter --------------
-
-" the main function
-function! SmartEnter()
-  " beware of the cmdline window
-  if &buftype == "nofile"
-    return "\<CR>"
-  endif
-
-  " get the character on the left of the cursor
-  let previous = getline(".")[col(".")-2]
-
-  " get the character on the right of the cursor
-  let next     = getline(".")[col(".")-1]
-
-  " do the right thing
-  if previous ==# "{"
-    return PairExpander(previous, "}", next)
-  elseif previous ==# "["
-    return PairExpander(previous, "]", next)
-  elseif previous ==# "("
-    return PairExpander(previous, ")", next)
-  elseif previous ==# ">"
-    return TagExpander(next)
-  else
-    return "\<CR>"
-  endif
-endfunction
-
-" expands {}, (), []
-function! PairExpander(left, right, next)
-  let next     = getline(".")[col(".")-1]
-
-  " do the right thing
-  if previous ==# "{"
-    return PairExpander(previous, "}", next)
-  elseif previous ==# "["
-    return PairExpander(previous, "]", next)
-  elseif previous ==# "("
-    return PairExpander(previous, ")", next)
-  elseif previous ==# ">"
-    return TagExpander(next)
-  else
-    return "\<CR>"
-  endif
-endfunction
-
-" expands {}, (), []
-function! PairExpander(left, right, next)
-  let pair_position = searchpairpos(a:left, "", a:right, "Wn")
-  if a:next !=# a:right && pair_position[0] == 0
-    return "\<CR>" . a:right . "\<C-o>==\<C-o>O"
-  elseif a:next !=# a:right && pair_position[0] != 0 && indent(pair_position[0]) != indent(".")
-    return "\<CR>" . a:right . "\<C-o>==\<C-o>O"
-  elseif a:next ==# a:right
-    return "\<CR>\<C-o>==\<C-o>O"
-  else
-    return "\<CR>"
-  endif
-endfunction
-
-" expands <tag></tag>
-function! TagExpander(next)
-  if a:next ==# "<" && getline(".")[col(".")] ==# "/"
-    if getline(".")[searchpos("<", "bnW")[1]] ==# "/" || getline(".")[searchpos("<", "bnW")[1]] !=# getline(".")[col(".") + 1]
-      return "\<CR>"
-    else
-      return "\<CR>\<C-o>==\<C-o>O"
-    endif
-  else
-    return "\<CR>"
-  endif
-endfunction
+" ----------------------------------------
 
 
 " -------------- Marmoset ----------------
@@ -580,32 +492,10 @@ function! MarmosetRelease()
 endfunction
 
 
-" -------------- SmartJump ---------------
+" -------------- Jump --------------------
 
-function! IsJumpChar(c)
-  if index(['[', ']', '{', '}', '(', ')', '"', "'", '<', '>', ',', '`', '$'], a:c) >= 0
-    return 1
-  else
-    return 0
-  endif
-endfunction
-
-function! SmartJump()
-  let x = col('.')
-  let y = line('.')
-  while 1
-    if y > line('$')
-      return 'j$'
-    endif
-    let line = split(getline(y), '\zs')
-    let len = len(line)
-    while x < len
-      if IsJumpChar(line[x])
-        return y . 'G' . (x + 1) . '|'
-      endif
-      let x = x + 1
-    endwhile
-    let x = 0
-    let y = y + 1
-  endwhile
+function! Jump()
+  let chars = ['[', ']', '{', '}', '(', ')', '"', "'", '<', '>', ',', '`', '$']
+  let regex = '\V' . join(chars, '\|')
+  call search(regex, 'cW')
 endfunction
