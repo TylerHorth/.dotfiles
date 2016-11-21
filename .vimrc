@@ -1,18 +1,18 @@
-set nocompatible
+" -------------- vim-plug ----------------
 
-" Install vim-plug if we don't arlready have it
 if empty(glob("~/.vim/autoload/plug.vim"))
     execute 'silent !mkdir -p ~/.vim/plugged'
     execute 'silent !mkdir -p ~/.vim/autoload'
     execute 'silent !curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+    PlugInstall
 endif
-
-call plug#begin('~/.vim/plugged')
 
 
 " ---------------------------------------- 
 "                PLUGINS 
 " ---------------------------------------- 
+
+call plug#begin('~/.vim/plugged')
 
 Plug 'kien/ctrlp.vim'
 Plug 'tpope/vim-surround'
@@ -447,7 +447,6 @@ let g:ac_smooth_scroll_du_sleep_time_msec = 5
 " ----------------------------------------
 "                FUNCTIONS
 " ----------------------------------------
-
 
 " -------------- Marmoset ----------------
 
