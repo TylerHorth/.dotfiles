@@ -14,7 +14,7 @@ if test -f /opt/dev/dev.fish
 end
 
 function fish_prompt
-  env FISH_VERSION=$FISH_VERSION PROMPTLINE_LAST_EXIT_CODE=$status bash promptline.sh left
+  env FISH_VERSION=$FISH_VERSION PROMPTLINE_LAST_EXIT_CODE=$status bash ~/.config/fish/promptline.sh left
 end
 
 function fish_mode_prompt --description 'Displays the current mode'
