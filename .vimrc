@@ -33,7 +33,7 @@ Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
 Plug 'tomtom/tcomment_vim'
-Plug 'nixprime/cpsm', { 'do': './install.sh' }
+Plug 'nixprime/cpsm', { 'do': 'env PY3=' . (has('python3') ? 'ON' : 'OFF') . ' ./install.sh' }
 Plug 'tpope/vim-ragtag'
 Plug 'tpope/vim-repeat'
 Plug 'svermeulen/vim-easyclip'
@@ -49,14 +49,13 @@ Plug 'airblade/vim-gitgutter'
 Plug 'xolox/vim-misc'
 Plug 'morhetz/gruvbox'
 Plug 'gioele/vim-autoswap'
-Plug 'terryma/vim-multiple-cursors'
 Plug 'gabrielelana/vim-markdown'
 Plug 'digitaltoad/vim-pug'
 Plug 'chrisbra/unicode.vim'
 Plug 'sunaku/vim-dasht'
 Plug 'wellle/targets.vim'
 Plug 'michaeljsmith/vim-indent-object'
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
+Plug 'ternjs/tern_for_vim', { 'do': 'nvm use default; npm install' }
 Plug 'sjl/gundo.vim'
 Plug 'yonchu/accelerated-smooth-scroll'
 Plug 'christoomey/vim-tmux-navigator'
@@ -369,6 +368,7 @@ map  M           m$
 
 nnoremap <Leader>t :TernDef<CR>
 
+
 " -------------- ale ---------------------
 
 let g:ale_sign_error = '•'
@@ -416,19 +416,9 @@ let g:vimtex_syntax_minted = [
       \]
 
 
-" -------------- vim-multiple-cursors ----
-
-let g:multi_cursor_exit_from_insert_mode = 0
-let g:multi_cursor_use_default_mapping = 0
-let g:multi_cursor_next_key='<C-f>'
-let g:multi_cursor_prev_key='<C-b>'
-let g:multi_cursor_skip_key='<C-x>'
-let g:multi_cursor_quit_key='<Esc>'
-
-
 " -------------- digraphs.vim ------------
 
-map <leader>d vh<F4>
+map <leader>di vh<F4>
 
 
 " -------------- gundo.vim ---------------
@@ -452,41 +442,41 @@ let g:ac_smooth_scroll_du_sleep_time_msec = 5
 let g:Course="cs241"
 
 function! MarmosetSubmit(...)
-	if a:0 > 0
-		let t:Files=a:1
-	end
-	if !exists("t:Files")
-		let t:Files=expand("%")
-	end
-	if exists("g:Course") && exists("t:Assignment")
-		execute "!marmoset submit " . g:Course . " " . t:Assignment . " " . t:Files
-	else
-		echo "g:Course/t:Assignment not defined! (:h let)"
-	end
+  if a:0 > 0
+    let t:Files=a:1
+  end
+  if !exists("t:Files")
+    let t:Files=expand("%")
+  end
+  if exists("g:Course") && exists("t:Assignment")
+    execute "!marmoset submit " . g:Course . " " . t:Assignment . " " . t:Files
+  else
+    echo "g:Course/t:Assignment not defined! (:h let)"
+  end
 endfunction
 
 function! MarmosetFetch()
-	if exists("g:Course") && exists("t:Assignment")
-		execute "!marmoset fetch " . g:Course . " " . t:Assignment
-	else
-		echo "g:Course/t:Assignment not defined! (:h let)"
-	end
+  if exists("g:Course") && exists("t:Assignment")
+    execute "!marmoset fetch " . g:Course . " " . t:Assignment
+  else
+    echo "g:Course/t:Assignment not defined! (:h let)"
+  end
 endfunction
 
 function! MarmosetLong()
-	if exists("g:Course") && exists("t:Assignment")
-		execute "!marmoset long " . g:Course . " " . t:Assignment
-	else
-		echo "g:Course/t:Assignment not defined! (:h let)"
-	end
+  if exists("g:Course") && exists("t:Assignment")
+    execute "!marmoset long " . g:Course . " " . t:Assignment
+  else
+    echo "g:Course/t:Assignment not defined! (:h let)"
+  end
 endfunction
 
 function! MarmosetRelease()
-	if exists("g:Course") && exists("t:Assignment")
+  if exists("g:Course") && exists("t:Assignment")
     execute "!marmoset release " . g:Course . " " . t:Assignment
-	else
-		echo "g:Course/t:Assignment not defined! (:h let)"
-	end
+  else
+    echo "g:Course/t:Assignment not defined! (:h let)"
+  end
 endfunction
 
 
