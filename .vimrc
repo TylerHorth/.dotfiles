@@ -20,7 +20,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
 Plug 'jiangmiao/auto-pairs'
 Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
-Plug 'maralla/completor.vim'
+Plug 'maralla/completor.vim', { 'do': 'nvm use default; make js' }
 Plug 'vim-scripts/a.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rdnetto/YCM-Generator', { 'for': [ 'c', 'cpp' ], 'branch': 'stable' }
@@ -354,13 +354,9 @@ nmap <leader>m :Merginal<CR>
 
 " -------------- vim-easyclip ------------
 
-let g:EasyClipUseCutDefaults         = 1
 let g:EasyClipUsePasteToggleDefaults = 0
 nmap ]p          <plug>EasyClipSwapPasteForward
 nmap [p          <plug>EasyClipSwapPasteBackwards
-nmap <silent> gs <plug>SubstituteOverMotionMap
-nmap gss         <plug>SubstituteLine
-xmap gs          <plug>XEasyClipPaste
 map  M           m$
 
 
@@ -376,6 +372,8 @@ let g:ale_sign_warning = '•'
 hi! link ALEErrorSign GruvboxRed
 hi! link ALEWarningSign GruvboxYellow
 let g:ale_sign_column_always = 1
+nnoremap gn :ALENext<CR>
+nnoremap gN :ALEPrevious<CR>
 
 
 " -------------- javascript-libraries ----
