@@ -23,7 +23,6 @@ Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
 Plug 'maralla/completor.vim', { 'do': 'nvm use default; make js' }
 Plug 'vim-scripts/a.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'rdnetto/YCM-Generator', { 'for': [ 'c', 'cpp' ], 'branch': 'stable' }
 Plug 'mhinz/vim-startify'
 Plug 'vim-ruby/vim-ruby', { 'for': [ 'eruby', 'ruby' ] }
 Plug 'tpope/vim-rails', { 'for': [ 'eruby', 'ruby' ] }
