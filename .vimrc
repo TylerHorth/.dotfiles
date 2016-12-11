@@ -179,8 +179,11 @@ inoremap <C-H>      <Left>
 inoremap <C-L>      <Right>
 
 " paste from insert
-imap     <C-p>      <C-O>p
-imap     <C-S-p>    <C-O>P
+imap     <C-p>      <C-R>"
+imap     <C-S-p>    <Left><C-R>"
+
+" Closer <Del>
+inoremap <C-D>      <Del>
 
 " Long line nav
 nnoremap j          gj
@@ -301,22 +304,26 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " -------------- vim-startify ------------
 
-function! s:filter_header(lines) abort
-  let longest_line   = max(map(copy(a:lines), 'len(v:val)'))
-  let centered_lines = map(copy(a:lines),
-        \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
-  return centered_lines
-endfunction
+let g:ascii = [
+      \ '        __',
+      \ '.--.--.|__|.--------.',
+      \ '|  |  ||  ||        |',
+      \ ' \___/ |__||__|__|__|',
+      \ ''
+      \]
+let g:startify_custom_header = map(g:ascii, '"   ".v:val')
 let g:startify_session_persistence = 1
-let g:startify_custom_header =
-      \ map(s:filter_header(split(system("bash -c \"fortune | cowsay -f $(ls -1 | python -c 'import sys; import random; print(random.choice(sys.stdin.readlines()).rstrip())';)\""), '\n')), '"   ". v:val') + ['']
 let g:startify_list_order = [
-      \ ['   Bookmarks'],
-      \ 'bookmarks',
       \ ['   Sessions'],
       \ 'sessions',
+      \ ['   Directory'],
+      \ 'dir',
+      \ ['   Bookmarks'],
+      \ 'bookmarks',
+      \ ['   Recent'],
+      \ 'files',
       \ ]
-let g:startify_bookmarks = ['~/.vimrc', '~/.bashrc']
+let g:startify_bookmarks = ['~/.dotfiles/.vimrc','~/.dotfiles']
 
 
 " -------------- vim-easy-align ----------
@@ -354,6 +361,7 @@ nmap <leader>m :Merginal<CR>
 " -------------- vim-easyclip ------------
 
 let g:EasyClipUsePasteToggleDefaults = 0
+let g:EasyClipUseSubstituteDefaults = 1
 nmap ]p          <plug>EasyClipSwapPasteForward
 nmap [p          <plug>EasyClipSwapPasteBackwards
 map  M           m$
@@ -392,21 +400,16 @@ let g:clever_f_chars_match_any_signs = ';'
 
 " -------------- vimtex ------------------
 
-let g:vimtex_latexmk_options = '-pvc -pdf -latexoption=-shell-escape'
+let g:vimtex_latexmk_options = '-pvc -pdf -synctex=1 -latexoption=-shell-escape'
 let g:vimtex_view_method = 'zathura'
-if !exists('g:ycm_semantic_triggers')
-  let g:ycm_semantic_triggers = {}
-endif
-let g:ycm_semantic_triggers.tex = [
-      \ 're!\\[A-Za-z]*cite[A-Za-z]*(\[[^]]*\]){0,2}{[^}]*',
-      \ 're!\\[A-Za-z]*ref({[^}]*|range{([^,{}]*(}{)?))',
-      \ 're!\\hyperref\[[^]]*',
-      \ 're!\\includegraphics\*?(\[[^]]*\]){0,2}{[^}]*',
-      \ 're!\\(include(only)?|input){[^}]*',
-      \ 're!\\\a*(gls|Gls|GLS)(pl)?\a*(\s*\[[^]]*\]){0,2}\s*\{[^}]*',
-      \ 're!\\includepdf(\s*\[[^]]*\])?\s*\{[^}]*',
-      \ 're!\\includestandalone(\s*\[[^]]*\])?\s*\{[^}]*',
-      \ ]
+let g:completor_tex_omni_trigger =
+        \   '\\(?:'
+        \  .   '\w*cite\w*(?:\s*\[[^]]*\]){0,2}\s*{[^}]*'
+        \  .  '|\w*ref(?:\s*\{[^}]*|range\s*\{[^,}]*(?:}{)?)'
+        \  .  '|hyperref\s*\[[^]]*'
+        \  .  '|includegraphics\*?(?:\s*\[[^]]*\]){0,2}\s*\{[^}]*'
+        \  .  '|(?:include(?:only)?|input)\s*\{[^}]*'
+        \  .')'
 let g:vimtex_syntax_minted = [
       \ {'lang' : 'c',},
       \ {'lang' : 'cpp',},
