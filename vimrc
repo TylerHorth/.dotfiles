@@ -318,7 +318,7 @@ let g:startify_list_order = [
       \ ['   Recent'],
       \ 'files',
       \ ]
-let g:startify_bookmarks = ['~/.dotfiles/.vimrc','~/.dotfiles']
+let g:startify_bookmarks = ['~/.dotfiles']
 
 
 " -------------- vim-easy-align ----------
