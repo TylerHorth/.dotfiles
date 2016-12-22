@@ -1,2 +1,4 @@
 # Tyler's dotfiles
-> Configuration files . . . ’n stuff.
+> Config files ŉ stuff.
+
+![Screenshot](screenshot.png?raw=true)
