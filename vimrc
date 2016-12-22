@@ -1,12 +1,3 @@
-" -------------- vim-plug ----------------
-
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall | source $MYVIMRC
-endif
-
-
 " ---------------------------------------- 
 "                PLUGINS 
 " ---------------------------------------- 
@@ -77,41 +68,41 @@ call plug#end()
 
 " -------------- GENERAL -----------------
 
-let mapleader=','                 " Mapleader
-let maplocalleader='-'            " Maplocalleader
-set showcmd                       " Show (partial) command in status line.
-set showmatch                     " Show matching brackets.
-set ignorecase                    " Do case insensitive matching
-set smartcase                     " Do smart case matching
-set incsearch                     " Incremental search
-set autowrite                     " Automatically save before commands like :next and :make
-set hidden                        " Hide buffers when they are abandoned
-set mouse=a                       " Enable mouse usage (all modes)
-set tabstop=2                     " a tab is two spaces
-set backspace=indent,eol,start    " allow backspacing over everything in insert mode
-set number                        " always show line numbers
-set shiftwidth=2                  " number of spaces to use for autoindenting
-set expandtab                     " Spaces instad of tabs
-set shiftround                    " use multiple of shiftwidth when indenting with '<' and '>'
-set hlsearch                      " highlight search terms
-set foldmethod=indent             " Create folds based on syntax
-set foldlevelstart=99             " Folds are not closed to start
-set pastetoggle=<F2>              " Paste mode
-set t_Co=256                      " Use 256 colors
-set termguicolors                 " True color support
-set noshowmode                    " Don't show current mode
-set clipboard=unnamed,unnamedplus " Merge system and vim clipboards
-set background=dark               " Set background to dark
-set grepprg=ag\ --vimgrep\ $*     " Use ag instead of grep
-set grepformat=%f:%l:%c:%m        " Set grepformat for ag 
-set splitbelow                    " Default to split below current window
-set splitright                    " Default to split on the right of window
-set updatetime=250                " Reduce update time from 4 seconds
-set wrap                          " wrap long lines
-set shell=bash                    " Tell vim to use bash shell
-set nocursorline                  " Don't highlight current line
-set ttyfast                       " Speed shit up or something
-set whichwrap+=<,>,[,]            " Line wrap for arrow keys
+let mapleader=','                       " Mapleader
+let maplocalleader='-'                  " Maplocalleader
+set showcmd                             " Show (partial) command in status line.
+set showmatch                           " Show matching brackets.
+set ignorecase                          " Do case insensitive matching
+set smartcase                           " Do smart case matching
+set incsearch                           " Incremental search
+set autowrite                           " Automatically save before commands like :next and :make
+set hidden                              " Hide buffers when they are abandoned
+set mouse=a                             " Enable mouse usage (all modes)
+set tabstop=2                           " a tab is two spaces
+set backspace=indent,eol,start          " allow backspacing over everything in insert mode
+set number                              " always show line numbers
+set shiftwidth=2                        " number of spaces to use for autoindenting
+set expandtab                           " Spaces instad of tabs
+set shiftround                          " use multiple of shiftwidth when indenting with '<' and '>'
+set hlsearch                            " highlight search terms
+set foldmethod=syntax                   " Create folds based on syntax
+set foldlevelstart=99                   " Folds are not closed to start
+set pastetoggle=<F2>                    " Paste mode
+set t_Co=256                            " Use 256 colors
+set termguicolors                       " True color support
+set noshowmode                          " Don't show current mode
+set clipboard=unnamed,unnamedplus       " Merge system and vim clipboards
+set background=dark                     " Set background to dark
+set grepprg=rg\ --vimgrep\ --no-heading " Use ripgrep instead of grep
+set grepformat=%f:%l:%c:%m,%f:%l:%m     " Set grepformat
+set splitbelow                          " Default to split below current window
+set splitright                          " Default to split on the right of window
+set updatetime=250                      " Reduce update time from 4 seconds
+set wrap                                " wrap long lines
+set shell=bash                          " Tell vim to use bash shell
+set nocursorline                        " Don't highlight current line
+set ttyfast                             " Speed shit up or something
+set whichwrap+=<,>,[,]                  " Line wrap for arrow keys
 
 
 " -------------- COLORSCHEME -------------
@@ -195,6 +186,10 @@ inoremap <Nul>      <C-O>:call Jump()<CR><Right>
 
 " Marks
 noremap gm          m
+
+" Filetype mappings
+autocmd FileType tex map  <buffer> <Leader>v :w<CR><LocalLeader>lv
+autocmd FileType tex imap <buffer> <Leader>v <C-O>:w<CR><C-O><LocalLeader>lv
 
 
 " -------------- COMMANDS ----------------
@@ -401,7 +396,29 @@ let g:clever_f_chars_match_any_signs = ';'
 " -------------- vimtex ------------------
 
 let g:vimtex_latexmk_options = '-pvc -pdf -synctex=1 -latexoption=-shell-escape'
-let g:vimtex_view_method = 'zathura'
+let g:vimtex_view_general_viewer
+      \ = '/Applications/Skim.app/Contents/SharedSupport/displayline'
+let g:vimtex_view_general_options = '-r @line @pdf @tex'
+
+" This adds a callback hook that updates Skim after compilation
+let g:vimtex_latexmk_callback_hooks = ['UpdateSkim']
+function! UpdateSkim(status)
+  if !a:status | return | endif
+
+  let l:out = b:vimtex.out()
+  let l:tex = expand('%:p')
+  let l:cmd = [g:vimtex_view_general_viewer, '-r']
+  if !empty(system('pgrep Skim'))
+    call extend(l:cmd, ['-g'])
+  endif
+  if has('nvim')
+    call jobstart(l:cmd + [line('.'), l:out, l:tex])
+  elseif has('job')
+    call job_start(l:cmd + [line('.'), l:out, l:tex])
+  else
+    call system(join(l:cmd + [line('.'), shellescape(l:out), shellescape(l:tex)], ' '))
+  endif
+endfunction
 let g:completor_tex_omni_trigger =
         \   '\\(?:'
         \  .   '\w*cite\w*(?:\s*\[[^]]*\]){0,2}\s*{[^}]*'
