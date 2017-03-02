@@ -26,6 +26,7 @@ Plug 'tomtom/tcomment_vim'
 Plug 'nixprime/cpsm', { 'do': 'env PY3=' . (has('python3') ? 'ON' : 'OFF') . ' ./install.sh' }
 Plug 'tpope/vim-ragtag'
 Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sleuth'
 Plug 'svermeulen/vim-easyclip'
 Plug 'lervag/vimtex'
 Plug 'moll/vim-node'
@@ -47,7 +48,6 @@ Plug 'wellle/targets.vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'ternjs/tern_for_vim', { 'do': 'nvm use default; npm install' }
 Plug 'sjl/gundo.vim'
-Plug 'yonchu/accelerated-smooth-scroll'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'tmux-plugins/vim-tmux'
@@ -58,6 +58,8 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'dag/vim-fish'
 Plug 'AndrewRadev/switch.vim'
+Plug 'jalvesaq/Nvim-R'
+Plug 'ludovicchabant/vim-gutentags'
 
 call plug#end()     
 
@@ -93,7 +95,7 @@ set termguicolors                       " True color support
 set noshowmode                          " Don't show current mode
 set clipboard=unnamed,unnamedplus       " Merge system and vim clipboards
 set background=dark                     " Set background to dark
-set grepprg=rg\ --vimgrep\ --no-heading " Use ripgrep instead of grep
+set grepprg=ag\ --nogroup\ --nocolor\ --column " Use ag instead of grep
 set grepformat=%f:%l:%c:%m,%f:%l:%m     " Set grepformat
 set splitbelow                          " Default to split below current window
 set splitright                          " Default to split on the right of window
@@ -103,6 +105,7 @@ set shell=bash                          " Tell vim to use bash shell
 set nocursorline                        " Don't highlight current line
 set ttyfast                             " Speed shit up or something
 set whichwrap+=<,>,[,]                  " Line wrap for arrow keys
+let g:c_syntax_for_h = 1                " Assume h files are c not c++
 
 
 " -------------- COLORSCHEME -------------
@@ -295,6 +298,7 @@ map <C-n> :NERDTreeToggle<CR>
 
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+let g:completor_completion_delay = 0
 
 
 " -------------- vim-startify ------------
@@ -376,6 +380,7 @@ hi! link ALEWarningSign GruvboxYellow
 let g:ale_sign_column_always = 1
 nnoremap gn :ALENext<CR>
 nnoremap gN :ALEPrevious<CR>
+let g:ale_linters = { 'c': ['cppcheck'] }
 
 
 " -------------- javascript-libraries ----
@@ -395,42 +400,26 @@ let g:clever_f_chars_match_any_signs = ';'
 
 " -------------- vimtex ------------------
 
-let g:vimtex_latexmk_options = '-pvc -pdf -synctex=1 -latexoption=-shell-escape'
-let g:vimtex_view_general_viewer
-      \ = '/Applications/Skim.app/Contents/SharedSupport/displayline'
-let g:vimtex_view_general_options = '-r @line @pdf @tex'
-
-" This adds a callback hook that updates Skim after compilation
-let g:vimtex_latexmk_callback_hooks = ['UpdateSkim']
-function! UpdateSkim(status)
-  if !a:status | return | endif
-
-  let l:out = b:vimtex.out()
-  let l:tex = expand('%:p')
-  let l:cmd = [g:vimtex_view_general_viewer, '-r']
-  if !empty(system('pgrep Skim'))
-    call extend(l:cmd, ['-g'])
-  endif
-  if has('nvim')
-    call jobstart(l:cmd + [line('.'), l:out, l:tex])
-  elseif has('job')
-    call job_start(l:cmd + [line('.'), l:out, l:tex])
-  else
-    call system(join(l:cmd + [line('.'), shellescape(l:out), shellescape(l:tex)], ' '))
-  endif
-endfunction
+let g:vimtex_latexmk_options = '-pdf -verbose -file-line-error -synctex=1 -interaction=nonstopmode -latexoption=-shell-escape'
+let g:vimtex_view_method = 'zathura'
+let g:vimtex_view_use_temp_files = 1
 let g:completor_tex_omni_trigger =
-        \   '\\(?:'
-        \  .   '\w*cite\w*(?:\s*\[[^]]*\]){0,2}\s*{[^}]*'
-        \  .  '|\w*ref(?:\s*\{[^}]*|range\s*\{[^,}]*(?:}{)?)'
-        \  .  '|hyperref\s*\[[^]]*'
-        \  .  '|includegraphics\*?(?:\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-        \  .  '|(?:include(?:only)?|input)\s*\{[^}]*'
-        \  .')'
+    \   '\\(?:'
+    \  .   '\w*cite\w*(?:\s*\[[^]]*\]){0,2}\s*{[^}]*'
+    \  .  '|\w*ref(?:\s*\{[^}]*|range\s*\{[^,}]*(?:}{)?)'
+    \  .  '|hyperref\s*\[[^]]*'
+    \  .  '|includegraphics\*?(?:\s*\[[^]]*\]){0,2}\s*\{[^}]*'
+    \  .  '|(?:include(?:only)?|input)\s*\{[^}]*'
+    \  .')'
+let g:vimtex_quickfix_ignored_warnings = [
+    \ 'Underfull',
+    \ 'Overfull',
+    \ 'specifier changed to',
+    \ ]
 let g:vimtex_syntax_minted = [
-      \ {'lang' : 'c',},
-      \ {'lang' : 'cpp',},
-      \]
+    \ {'lang' : 'c',},
+    \ {'lang' : 'cpp',},
+    \ ]
 
 
 " -------------- digraphs.vim ------------
