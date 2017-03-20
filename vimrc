@@ -10,18 +10,18 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
 Plug 'jiangmiao/auto-pairs'
-Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
-Plug 'maralla/completor.vim', { 'do': 'nvm use default; make js' }
+Plug 'PotatoesMaster/i3-vim-syntax'
+Plug 'maralla/completor.vim', { 'do': executable('node') ? 'make js' : 'echo No node' }
 Plug 'vim-scripts/a.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'mhinz/vim-startify'
-Plug 'vim-ruby/vim-ruby', { 'for': [ 'eruby', 'ruby' ] }
-Plug 'tpope/vim-rails', { 'for': [ 'eruby', 'ruby' ] }
-Plug 'tpope/vim-bundler', { 'for': [ 'eruby', 'ruby' ] }
-Plug 'junegunn/vim-easy-align', { 'on': ['<Plug>(EasyAlign)', 'EasyAlign'] }
+Plug 'vim-ruby/vim-ruby'
+Plug 'tpope/vim-rails'
+Plug 'tpope/vim-bundler'
+Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
-Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
+Plug 'kchmck/vim-coffee-script'
 Plug 'tomtom/tcomment_vim'
 Plug 'nixprime/cpsm', { 'do': 'env PY3=' . (has('python3') ? 'ON' : 'OFF') . ' ./install.sh' }
 Plug 'tpope/vim-ragtag'
@@ -46,7 +46,7 @@ Plug 'chrisbra/unicode.vim'
 Plug 'sunaku/vim-dasht'
 Plug 'wellle/targets.vim'
 Plug 'michaeljsmith/vim-indent-object'
-Plug 'ternjs/tern_for_vim', { 'do': 'nvm use default; npm install' }
+Plug 'ternjs/tern_for_vim', { 'do': executable('node') ? 'make js' : 'echo No node' }
 Plug 'sjl/gundo.vim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tmux-plugins/vim-tmux-focus-events'
