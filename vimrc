@@ -60,6 +60,8 @@ Plug 'dag/vim-fish'
 Plug 'AndrewRadev/switch.vim'
 Plug 'jalvesaq/Nvim-R'
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'SirVer/ultisnips' 
+Plug 'honza/vim-snippets'
 
 call plug#end()     
 
@@ -167,8 +169,8 @@ inoremap <leader>j  <C-O>o
 inoremap <leader>k  <C-O>O
 
 " Navigation from insert
-inoremap <C-J>      <Down>
-inoremap <C-K>      <Up>
+inoremap <expr> <C-J> pumvisible() ? "\<C-n>" : "\<Down>"
+inoremap <expr> <C-K> pumvisible() ? "\<C-p>" : "\<Up>"
 inoremap <C-H>      <Left>
 inoremap <C-L>      <Right>
 
@@ -223,6 +225,13 @@ augroup END
 " ---------------------------------------- 
 "                PLUGIN OPTIONS 
 " ---------------------------------------- 
+
+" -------------- ultisnips ---------------
+
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
 
 " -------------- switch.vim --------------
 
@@ -296,9 +305,8 @@ map <C-n> :NERDTreeToggle<CR>
 
 " -------------- completor.vim -----------
 
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 let g:completor_completion_delay = 0
+let g:completor_disable_buffer = 1
 
 
 " -------------- vim-startify ------------

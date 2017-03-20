@@ -12,12 +12,12 @@ general {
 				output_format = i3bar
 }
 
-order += "mpd_status"
-order += "disk /"
-order += "cpu_temperature 2"
-order += "sysdata"
-order += "dpms"
-order += "volume master"
+# order += "mpd_status"
+# order += "disk /"
+# order += "cpu_temperature 2"
+# order += "sysdata"
+# order += "dpms"
+# order += "volume master"
 order += "tztime local"
 order += "time"
 
