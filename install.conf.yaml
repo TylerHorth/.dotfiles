@@ -12,6 +12,10 @@
 
 - link:
     ~/.vimrc: vimrc
+    ~/.config/nvim/init.vim: vimrc
+    ~/.config/nvim/autoload: ~/.vim/autoload
+    ~/.config/nvim/plugged: ~/.vim/plugged
+    ~/.config/nvim/session: ~/.vim/session
     ~/.tmux.conf: tmux.conf
     ~/.tmux/tmuxline: tmuxline
     ~/.config/i3/config: config.i3

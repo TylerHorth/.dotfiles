@@ -2,7 +2,7 @@
 "                PLUGINS 
 " ---------------------------------------- 
 
-call plug#begin('~/.vim/plugged')
+call plug#begin()
 
 Plug 'kien/ctrlp.vim'
 Plug 'tpope/vim-surround'
@@ -11,7 +11,6 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
 Plug 'jiangmiao/auto-pairs'
 Plug 'PotatoesMaster/i3-vim-syntax'
-Plug 'maralla/completor.vim', { 'do': executable('node') ? 'make js' : 'echo No node' }
 Plug 'vim-scripts/a.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'mhinz/vim-startify'
@@ -46,7 +45,6 @@ Plug 'chrisbra/unicode.vim'
 Plug 'sunaku/vim-dasht'
 Plug 'wellle/targets.vim'
 Plug 'michaeljsmith/vim-indent-object'
-Plug 'ternjs/tern_for_vim', { 'do': executable('node') ? 'make js' : 'echo No node' }
 Plug 'sjl/gundo.vim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tmux-plugins/vim-tmux-focus-events'
@@ -62,6 +60,22 @@ Plug 'jalvesaq/Nvim-R'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'SirVer/ultisnips' 
 Plug 'honza/vim-snippets'
+if executable('tern')
+  Plug 'ternjs/tern_for_vim'
+endif
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'Shougo/neoinclude.vim'
+  Plug 'zchee/deoplete-clang'
+  Plug 'Shougo/neco-vim'
+  Plug 'Shougo/neco-syntax'
+  Plug 'ponko2/deoplete-fish'
+  if executable('tern')
+    Plug 'carlitux/deoplete-ternjs'
+  endif
+else
+  Plug 'maralla/completor.vim', { 'do': executable('npm') ? 'make js' : 'echo No npm' }
+endif
 
 call plug#end()     
 
@@ -186,8 +200,13 @@ nnoremap j          gj
 nnoremap k          gk
 
 " Jump to next closest bracket, comma, quote, etc.
-noremap  <Nul>      :call Jump()<CR><Right>
-inoremap <Nul>      <C-O>:call Jump()<CR><Right>
+if has('nvim')
+  noremap  <c-space>  :call Jump()<CR><Right>
+  inoremap <c-space>  <C-O>:call Jump()<CR><Right>
+else
+  noremap  <Nul>      :call Jump()<CR><Right>
+  inoremap <Nul>      <C-O>:call Jump()<CR><Right>
+endif
 
 " Marks
 noremap gm          m
@@ -225,6 +244,11 @@ augroup END
 " ---------------------------------------- 
 "                PLUGIN OPTIONS 
 " ---------------------------------------- 
+
+" -------------- deoplete ----------------
+
+let g:deoplete#enable_at_startup = 1
+
 
 " -------------- ultisnips ---------------
 
@@ -377,6 +401,8 @@ map  M           m$
 " -------------- tern_for_vim ------------
 
 nnoremap <Leader>t :TernDef<CR>
+let g:tern#command = ["tern"]
+let g:tern#arguments = ["--persistent"]
 
 
 " -------------- ale ---------------------
