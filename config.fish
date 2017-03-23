@@ -9,6 +9,11 @@ if which mvim > /dev/null
   function vim; mvim -v $argv; end
 end
 
+if which nvim > /dev/null
+  function vi; nvim $argv; end
+  function vim; nvim $argv; end
+end
+
 if test -f /opt/dev/dev.fish
   source /opt/dev/dev.fish
 end
