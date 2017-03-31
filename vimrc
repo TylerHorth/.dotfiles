@@ -58,15 +58,17 @@ Plug 'dag/vim-fish'
 Plug 'AndrewRadev/switch.vim'
 Plug 'jalvesaq/Nvim-R'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'SirVer/ultisnips' 
-Plug 'honza/vim-snippets'
+Plug 'Shougo/neosnippet' 
+Plug 'Shougo/neosnippet-snippets'
+Plug 'majutsushi/tagbar'
 if executable('tern')
   Plug 'ternjs/tern_for_vim'
 endif
 if has('nvim')
+  Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'Shougo/echodoc.vim'
   Plug 'Shougo/neoinclude.vim'
-  Plug 'zchee/deoplete-clang'
   Plug 'Shougo/neco-vim'
   Plug 'Shougo/neco-syntax'
   Plug 'ponko2/deoplete-fish'
@@ -74,7 +76,7 @@ if has('nvim')
     Plug 'carlitux/deoplete-ternjs'
   endif
 else
-  Plug 'maralla/completor.vim', { 'do': executable('npm') ? 'make js' : 'echo No npm' }
+  Plug 'maralla/completor.vim'
 endif
 
 call plug#end()     
@@ -122,6 +124,9 @@ set nocursorline                        " Don't highlight current line
 set ttyfast                             " Speed shit up or something
 set whichwrap+=<,>,[,]                  " Line wrap for arrow keys
 let g:c_syntax_for_h = 1                " Assume h files are c not c++
+if has('nvim')
+  let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1   " Cursor shape for neovim
+endif
 
 
 " -------------- COLORSCHEME -------------
@@ -245,16 +250,38 @@ augroup END
 "                PLUGIN OPTIONS 
 " ---------------------------------------- 
 
+" -------------- tagbar ------------------
+
+nnoremap <silent> <leader>g :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
+let g:tagbar_sort = 0
+let g:tagbar_compact = 1
+
+
 " -------------- deoplete ----------------
 
+let g:deoplete#auto_complete_start_length = 1
 let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
 
 
-" -------------- ultisnips ---------------
+" -------------- neosnippet --------------
 
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:endwise_no_mappings = 1
+imap <expr> <CR> neosnippet#expandable_or_jumpable() ?
+      \ "\<Plug>(neosnippet_expand_or_jump)" :
+      \ pumvisible() ? deoplete#mappings#close_popup() : "\<CR>\<Plug>AutoPairsReturn\<Plug>DiscretionaryEnd"
+imap <expr> <TAB> pumvisible() ? "\<C-n>"
+      \ : neosnippet#expandable_or_jumpable() ?
+      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+imap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
+smap <expr> <TAB> neosnippet#expandable_or_jumpable() ?
+      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+" For conceal markers.
+if has('conceal')
+  set conceallevel=2 concealcursor=niv
+endif
 
 
 " -------------- switch.vim --------------
@@ -264,7 +291,8 @@ let g:switch_mapping = "<leader>."
 
 " -------------- auto-pairs --------------
 
-let g:AutoPairsMapCh = 0
+let g:AutoPairsMapCh=0
+let g:AutoPairsMapCR=0 
 
 
 " -------------- a.vim ------------------- 
@@ -370,18 +398,8 @@ let g:user_emmet_complete_tag = 1
 let g:user_emmet_leader_key = '<C-e>'
 imap <leader><Tab> <plug>(emmet-expand-abbr)
 map  <leader>u     <plug>(emmet-update-tag)
-imap <C-y>d        <plug>(emmet-balance-tag-inward)
-imap <C-y>D        <plug>(emmet-balance-tag-outward)
 imap <leader>n     <plug>(emmet-move-next)
 imap <leader>N     <plug>(emmet-move-prev)
-imap <C-y>i        <plug>(emmet-image-size)
-imap <C-y>/        <plug>(emmet-toggle-comment)
-imap <C-y>j        <plug>(emmet-split-join-tag)
-imap <C-y>k        <plug>(emmet-remove-tag)
-imap <C-y>a        <plug>(emmet-anchorize-url)
-imap <C-y>A        <plug>(emmet-anchorize-summary)
-imap <C-y>m        <plug>(emmet-merge-lines)
-imap <C-y>c        <plug>(emmet-code-pretty)
 
 
 " -------------- vim-merginal ------------
