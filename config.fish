@@ -31,7 +31,7 @@ function fish_mode_prompt --description 'Displays the current mode'
       case default
         set_color --bold --background a89984 282828
         echo ' N '
-        if test -n $SSH_CLIENT
+        if test -n "$SSH_CLIENT"
           set_color --bold --background a89984 504945
         else
           set_color --bold --background 504945 a89984
@@ -40,7 +40,7 @@ function fish_mode_prompt --description 'Displays the current mode'
       case insert
         set_color --bold --background 83a598 282828
         echo ' I '
-        if test -n $SSH_CLIENT
+        if test -n "$SSH_CLIENT"
           set_color --bold --background a89984 83a598
         else
           set_color --bold --background 504945 83a598
@@ -49,7 +49,7 @@ function fish_mode_prompt --description 'Displays the current mode'
       case replace-one
         set_color --bold --background 8ec07c 282828
         echo ' R '
-        if test -n $SSH_CLIENT
+        if test -n "$SSH_CLIENT"
           set_color --bold --background a89984 8ec07c
         else
           set_color --bold --background 504945 8ec07c
@@ -58,7 +58,7 @@ function fish_mode_prompt --description 'Displays the current mode'
       case visual
         set_color --bold --background d79921 282828
         echo ' V '
-        if test -n $SSH_CLIENT
+        if test -n "$SSH_CLIENT"
           set_color --bold --background a89984 d79921
         else
           set_color --bold --background 504945 d79921
