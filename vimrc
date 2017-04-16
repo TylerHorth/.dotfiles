@@ -49,7 +49,7 @@ Plug 'sjl/gundo.vim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'tmux-plugins/vim-tmux'
-Plug 'metakirby5/codi.vim'
+Plug 'jpalardy/vim-slime'
 Plug 'tpope/vim-endwise'
 Plug 'bufonly.vim'
 Plug 'AndrewRadev/splitjoin.vim'
@@ -250,6 +250,13 @@ augroup END
 " ---------------------------------------- 
 "                PLUGIN OPTIONS 
 " ---------------------------------------- 
+
+
+" -------------- slime -------------------
+
+let g:slime_target = "tmux"
+let g:slime_default_config = {"socket_name": split($TMUX, ",")[0], "target_pane": ":.2"}
+
 
 " -------------- tagbar ------------------
 
