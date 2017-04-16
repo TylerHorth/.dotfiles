@@ -255,7 +255,7 @@ augroup END
 " -------------- slime -------------------
 
 let g:slime_target = "tmux"
-let g:slime_default_config = {"socket_name": split($TMUX, ",")[0], "target_pane": ":.2"}
+let g:slime_default_config = {"socket_name": empty($TMUX) ? "" : split($TMUX, ",")[0], "target_pane": ":.2"}
 
 
 " -------------- tagbar ------------------
