@@ -33,10 +33,11 @@ function fish_mode_prompt --description 'Displays the current mode'
         echo ' N '
         if test -n "$SSH_CLIENT"
           set_color --bold --background a89984 504945
+          echo ''
         else
           set_color --bold --background 504945 a89984
+          echo ''
         end
-        echo ''
       case insert
         set_color --bold --background 83a598 282828
         echo ' I '
