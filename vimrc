@@ -61,6 +61,8 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'Shougo/neosnippet' 
 Plug 'Shougo/neosnippet-snippets'
 Plug 'majutsushi/tagbar'
+Plug 'matze/vim-move'
+Plug 'vimwiki/vimwiki'
 if executable('tern')
   Plug 'ternjs/tern_for_vim'
 endif
@@ -152,7 +154,6 @@ nnoremap <leader>qh <C-W><C-H>:q<CR>
 nnoremap <leader>qj <C-W><C-J>:q<CR>
 nnoremap <leader>qk <C-W><C-K>:q<CR>
 nnoremap <leader>ql <C-W><C-L>:q<CR>
-nnoremap <leader>ww :w<CR>
 nnoremap <leader>ss :w<CR>
 nnoremap <leader>wq :wq<CR>
 
@@ -263,6 +264,7 @@ let g:tagbar_compact = 1
 let g:deoplete#auto_complete_start_length = 1
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
+call deoplete#custom#set('neosnippet', 'rank', 9999)
 
 
 " -------------- neosnippet --------------
@@ -482,13 +484,6 @@ map <leader>di vh<F4>
 " -------------- gundo.vim ---------------
 
 nnoremap gu :GundoToggle<CR>
-
-
-" -------------- smooth-scroll ----------
-
-let g:ac_smooth_scroll_min_limit_msec = 0
-let g:ac_smooth_scroll_fb_sleep_time_msec = 5
-let g:ac_smooth_scroll_du_sleep_time_msec = 5
 
 
 " ----------------------------------------
