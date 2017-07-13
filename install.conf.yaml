@@ -10,6 +10,9 @@
   - ~/.config/i3status/
   - ~/.config/fish/
 
+- shell:
+  - ["mkdir -p ~/.vim/{autoload,plugged,session}", "Creating vim dirs"]
+
 - link:
     ~/.vimrc: vimrc
     ~/.config/nvim/init.vim: vimrc
