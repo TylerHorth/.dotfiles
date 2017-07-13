@@ -4,7 +4,6 @@
 
 call plug#begin()
 
-Plug 'kien/ctrlp.vim'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -22,7 +21,6 @@ Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
 Plug 'kchmck/vim-coffee-script'
 Plug 'tomtom/tcomment_vim'
-Plug 'nixprime/cpsm', { 'do': 'env PY3=' . (has('python3') ? 'ON' : 'OFF') . ' ./install.sh' }
 Plug 'tpope/vim-ragtag'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
@@ -58,11 +56,14 @@ Plug 'dag/vim-fish'
 Plug 'AndrewRadev/switch.vim'
 Plug 'jalvesaq/Nvim-R'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'Shougo/neosnippet' 
+Plug 'Shougo/neosnippet.vim' 
 Plug 'Shougo/neosnippet-snippets'
 Plug 'majutsushi/tagbar'
 Plug 'matze/vim-move'
 Plug 'vimwiki/vimwiki'
+Plug 'sheerun/vim-polyglot'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 if executable('tern')
   Plug 'ternjs/tern_for_vim'
 endif
@@ -165,9 +166,6 @@ noremap  gj         10j
 noremap  gk         10k
 noremap  gl         25l
 
-" Join lines
-nnoremap K          kJ
-
 " quick macro
 map      Q          @q
 
@@ -265,25 +263,67 @@ let g:tagbar_autofocus = 1
 let g:tagbar_sort = 0
 let g:tagbar_compact = 1
 
+" -------------- LanguageClient ----------
+
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['rustup', 'run', 'nightly', 'rls']
+    \ }
+let g:LanguageClient_autoStart = 1
+if has('nvim')
+  nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
+  nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+  nnoremap <silent> gr :call LanguageClient_textDocument_rename()<CR>
+  nnoremap <silent> <C-T> :call LanguageClient_textDocument_documentSymbol()<CR>
+  nnoremap <silent> <leader>r :call LanguageClient_textDocument_references()<CR>
+else
+  nnoremap <C-T> :Tags<CR>
+endif
+
+let g:LanguageClient_diagnosticsDisplay = {
+      \ 1: {
+      \ "name": "Error",
+      \ "texthl": "ALEError",
+      \ "signText": "•",
+      \ "signTexthl": "ALEErrorSign"
+      \ },
+      \ 2: {
+      \ "name": "Warning",
+      \ "texthl": "ALEWarning",
+      \ "signText": "•",
+      \ "signTexthl": "ALEWarningSign"
+      \ },
+      \ 3: {
+      \ "name": "Information",
+      \ "texthl": "LanguageClientInformation",
+      \ "signText": "•",
+      \ "signTexthl": "ALEInfoSign"
+      \ },
+      \ 4: {
+      \ "name": "Hint",
+      \ "texthl": "LanguageClientHint",
+      \ "signText": "•",
+      \ "signTexthl": "ALEInfoSign"
+      \ }
+      \ }
+
 
 " -------------- deoplete ----------------
 
 let g:deoplete#auto_complete_start_length = 1
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
+let g:deoplete#max_menu_width = -1
+let g:deoplete#max_abbr_width = -1
 call deoplete#custom#set('neosnippet', 'rank', 9999)
+call deoplete#custom#set('buffer', 'rank', 0)
 
 
 " -------------- neosnippet --------------
 
-let g:endwise_no_mappings = 1
-imap <expr> <CR> neosnippet#expandable_or_jumpable() ?
-      \ "\<Plug>(neosnippet_expand_or_jump)" :
-      \ pumvisible() ? deoplete#mappings#close_popup() : "\<CR>\<Plug>AutoPairsReturn\<Plug>DiscretionaryEnd"
-imap <expr> <TAB> pumvisible() ? "\<C-n>"
-      \ : neosnippet#expandable_or_jumpable() ?
+let g:neosnippet#enable_completed_snippet = 1
+let g:neosnippet#enable_optional_arguments = 0
+imap <expr> <TAB> neosnippet#expandable_or_jumpable() ?
       \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-imap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
 smap <expr> <TAB> neosnippet#expandable_or_jumpable() ?
       \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
@@ -301,7 +341,7 @@ let g:switch_mapping = "<leader>."
 " -------------- auto-pairs --------------
 
 let g:AutoPairsMapCh=0
-let g:AutoPairsMapCR=0 
+au FileType rust let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`'}
 
 
 " -------------- a.vim ------------------- 
@@ -328,17 +368,10 @@ let g:dasht_filetype_docsets = {
       \ }
 
 
-" -------------- ctrlp.vim --------------- 
+" -------------- fzf --------------------- 
 
-let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
-let g:ctrlp_user_command = 'ag %s --nocolor --nogroup -g ""'
-let g:ctrlp_use_caching = 1 
-let g:ctrlp_clear_cache_on_exit = 1
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_lazy_update = 0 
-let g:ctrlp_match_func = {'match': 'cpsm#CtrlPMatch'}
-nnoremap <C-T> :CtrlPTag<CR>
-nnoremap <C-G> :CtrlPBuffer<CR>
+nnoremap <C-P> :Files<CR>
+nnoremap <C-G> :Buffers<CR>
 
 
 " -------------- easymotion --------------
@@ -441,7 +474,7 @@ hi! link ALEWarningSign GruvboxYellow
 let g:ale_sign_column_always = 1
 nnoremap gn :ALENext<CR>
 nnoremap gN :ALEPrevious<CR>
-let g:ale_linters = { 'c': ['cppcheck'] }
+let g:ale_linters = { 'c': ['cppcheck'], 'rust': []}
 
 
 " -------------- javascript-libraries ----
