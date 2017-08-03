@@ -1,19 +1,12 @@
 function fish_user_key_bindings
   fish_vi_key_bindings
   source ~/.fzf/shell/key-bindings.fish
-  set -gx FZF_TMUX 1
-  set -gx FZF_TMUX_HEIGHT 40%
   fzf_key_bindings
   bind -M insert \cf accept-autosuggestion
   bind \cf accept-autosuggestion
 end
 
 set fish_term24bit 1
-
-set -l GRUVBOX_SCRIPT ~/.vim/plugged/gruvbox/gruvbox_256palette.sh
-if test -f $GRUVBOX_SCRIPT
-  bash $GRUVBOX_SCRIPT
-end
 
 if which mvim > /dev/null
   function vi; mvim -v $argv; end
@@ -96,3 +89,5 @@ end
 
 bind L 'nextd; commandline -f repaint'
 bind H 'prevd; commandline -f repaint'
+
+set -x FZF_DEFAULT_COMMAND 'rg --files --hidden --glob "!.git/*"'

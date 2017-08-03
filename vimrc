@@ -17,7 +17,6 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-bundler'
 Plug 'junegunn/vim-easy-align'
-Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
 Plug 'kchmck/vim-coffee-script'
 Plug 'tomtom/tcomment_vim'
@@ -116,7 +115,7 @@ set termguicolors                       " True color support
 set noshowmode                          " Don't show current mode
 set clipboard=unnamed,unnamedplus       " Merge system and vim clipboards
 set background=dark                     " Set background to dark
-set grepprg=ag\ --nogroup\ --nocolor\ --column " Use ag instead of grep
+set grepprg=set grepprg=rg\ --vimgrep   " Use ag instead of grep
 set grepformat=%f:%l:%c:%m,%f:%l:%m     " Set grepformat
 set splitbelow                          " Default to split below current window
 set splitright                          " Default to split on the right of window
@@ -129,6 +128,9 @@ set whichwrap+=<,>,[,]                  " Line wrap for arrow keys
 let g:c_syntax_for_h = 1                " Assume h files are c not c++
 if has('nvim')
   let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1   " Cursor shape for neovim
+endif
+if exists('&inccommand')
+  set inccommand=nosplit
 endif
 
 
@@ -176,8 +178,7 @@ map      \\         \m\r
 
 " Quickly edit/reload the vimrc file
 nmap     <silent>   <leader>ev  :e  $MYVIMRC<CR>
-nmap     <silent>   <leader>sv  :so $MYVIMRC<CR><F5>
-
+nmap     <silent>   <leader>sv  :so $MYVIMRC<CR><F5> 
 " New lines from normal mode
 nnoremap <leader>k  O<Esc>j
 nnoremap <leader>j  o<Esc>k
@@ -222,6 +223,7 @@ autocmd FileType tex imap <buffer> <Leader>v <C-O>:w<CR><C-O><LocalLeader>lv
 
 " -------------- COMMANDS ----------------
 
+command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
 command! -nargs=? Submit call MarmosetSubmit(<f-args>)
 command! Fetch call MarmosetFetch()
 command! Long call MarmosetLong()
@@ -316,16 +318,20 @@ let g:deoplete#max_menu_width = -1
 let g:deoplete#max_abbr_width = -1
 call deoplete#custom#set('neosnippet', 'rank', 9999)
 call deoplete#custom#set('buffer', 'rank', 0)
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 
 " -------------- neosnippet --------------
 
 let g:neosnippet#enable_completed_snippet = 1
 let g:neosnippet#enable_optional_arguments = 0
-imap <expr> <TAB> neosnippet#expandable_or_jumpable() ?
-      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr> <TAB> neosnippet#expandable_or_jumpable() ?
-      \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+imap <expr> <C-F> neosnippet#expandable_or_jumpable() ?
+      \ "\<Plug>(neosnippet_jump_or_expand)" :
+      \ deoplete#mappings#close_popup()
+smap <expr> <C-F> neosnippet#expandable_or_jumpable() ?
+      \ "\<Plug>(neosnippet_jump_or_expand)" :
+      \ deoplete#mappings#close_popup()
 
 " For conceal markers.
 if has('conceal')
@@ -341,7 +347,7 @@ let g:switch_mapping = "<leader>."
 " -------------- auto-pairs --------------
 
 let g:AutoPairsMapCh=0
-au FileType rust let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`'}
+au FileType rust let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`', '<':'>'}
 
 
 " -------------- a.vim ------------------- 
@@ -431,17 +437,6 @@ let g:startify_bookmarks = ['~/.dotfiles']
 
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
-
-
-" -------------- emmet-vim ---------------
-
-let g:user_emmet_install_global = 1
-let g:user_emmet_complete_tag = 1
-let g:user_emmet_leader_key = '<C-e>'
-imap <leader><Tab> <plug>(emmet-expand-abbr)
-map  <leader>u     <plug>(emmet-update-tag)
-imap <leader>n     <plug>(emmet-move-next)
-imap <leader>N     <plug>(emmet-move-prev)
 
 
 " -------------- vim-merginal ------------
