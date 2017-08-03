@@ -3,13 +3,6 @@
       create: true
       relink: true
 
-- clean:
-  - ~/
-  - ~/.tmux/
-  - ~/.config/i3/
-  - ~/.config/i3status/
-  - ~/.config/fish/
-
 - shell:
   - ["mkdir -p ~/.vim/{autoload,plugged,session}", "Creating vim dirs"]
 
@@ -25,6 +18,7 @@
     ~/.config/i3status/config: config.i3status
     ~/.config/fish/config.fish: config.fish
     ~/.config/fish/promptline: promptline
+    ~/.config/alacritty/alacritty.yml: alacritty.yml
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
