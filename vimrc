@@ -74,6 +74,7 @@ if has('nvim')
   Plug 'Shougo/neco-vim'
   Plug 'Shougo/neco-syntax'
   Plug 'ponko2/deoplete-fish'
+  Plug 'poppyschmo/deoplete-latex'
   if executable('tern')
     Plug 'carlitux/deoplete-ternjs'
   endif
@@ -492,14 +493,6 @@ let g:clever_f_chars_match_any_signs = ';'
 let g:vimtex_latexmk_options = '-pdf -verbose -file-line-error -synctex=1 -interaction=nonstopmode -latexoption=-shell-escape'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_view_use_temp_files = 1
-let g:completor_tex_omni_trigger =
-    \   '\\(?:'
-    \  .   '\w*cite\w*(?:\s*\[[^]]*\]){0,2}\s*{[^}]*'
-    \  .  '|\w*ref(?:\s*\{[^}]*|range\s*\{[^,}]*(?:}{)?)'
-    \  .  '|hyperref\s*\[[^]]*'
-    \  .  '|includegraphics\*?(?:\s*\[[^]]*\]){0,2}\s*\{[^}]*'
-    \  .  '|(?:include(?:only)?|input)\s*\{[^}]*'
-    \  .')'
 let g:vimtex_quickfix_ignored_warnings = [
     \ 'Underfull',
     \ 'Overfull',
