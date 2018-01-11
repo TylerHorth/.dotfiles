@@ -124,6 +124,7 @@ set updatetime=250                      " Reduce update time from 4 seconds
 set wrap                                " wrap long lines
 set shell=bash                          " Tell vim to use bash shell
 set nocursorline                        " Don't highlight current line
+set signcolumn=yes                      " Sign column open
 set ttyfast                             " Speed shit up or something
 set whichwrap+=<,>,[,]                  " Line wrap for arrow keys
 let g:c_syntax_for_h = 1                " Assume h files are c not c++
@@ -388,6 +389,7 @@ map <LocalLeader> <Plug>(easymotion-prefix)
 
 " -------------- vim-airline -------------
 
+let g:airline_theme='gruvbox'
 map <F5> :redraw!<CR>:AirlineRefresh<CR>
 set laststatus=2
 set timeoutlen=1000 ttimeoutlen=0
@@ -476,11 +478,6 @@ let g:ale_linters = { 'c': ['cppcheck'], 'rust': []}
 " -------------- javascript-libraries ----
 
 let g:used_javascript_libs = 'jquery'
-
-
-" -------------- vim-gitgutter -----------
-
-let g:gitgutter_sign_column_always = 1
 
 
 " -------------- clever-f.vim ------------
