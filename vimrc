@@ -60,7 +60,6 @@ Plug 'Shougo/neosnippet-snippets'
 Plug 'majutsushi/tagbar'
 Plug 'matze/vim-move'
 Plug 'vimwiki/vimwiki'
-Plug 'sheerun/vim-polyglot'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 if executable('tern')
@@ -126,6 +125,7 @@ set shell=bash                          " Tell vim to use bash shell
 set nocursorline                        " Don't highlight current line
 set ttyfast                             " Speed shit up or something
 set whichwrap+=<,>,[,]                  " Line wrap for arrow keys
+set signcolumn=yes                      " Always sign column
 let g:c_syntax_for_h = 1                " Assume h files are c not c++
 if has('nvim')
   let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1   " Cursor shape for neovim
@@ -162,8 +162,6 @@ nnoremap <leader>ss :w<CR>
 nnoremap <leader>wq :wq<CR>
 
 " normal movement
-noremap  gt         H
-noremap  gb         L
 noremap  gh         25h
 noremap  gj         10j
 noremap  gk         10k
@@ -216,6 +214,9 @@ endif
 
 " Marks
 noremap gm          m
+
+" Run command, insert result below
+nnoremap <leader>c yy0i> <ESC>:r !<C-R>"<CR>
 
 " Filetype mappings
 autocmd FileType tex map  <buffer> <Leader>v :w<CR><LocalLeader>lv
@@ -317,8 +318,8 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#max_menu_width = -1
 let g:deoplete#max_abbr_width = -1
-call deoplete#custom#set('neosnippet', 'rank', 9999)
-call deoplete#custom#set('buffer', 'rank', 0)
+call deoplete#custom#source('neosnippet', 'rank', 9999)
+call deoplete#custom#source('buffer', 'rank', 0)
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
@@ -336,7 +337,7 @@ smap <expr> <C-F> neosnippet#expandable_or_jumpable() ?
 
 " For conceal markers.
 if has('conceal')
-  set conceallevel=2 concealcursor=niv
+  set conceallevel=2
 endif
 
 
@@ -439,6 +440,9 @@ let g:startify_bookmarks = ['~/.dotfiles']
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
+let g:easy_align_delimiters = {
+\ '/': { 'pattern': '//\+', 'delimiter_align': 'l', 'ignore_groups': ['!Comment'] }
+\ }
 
 " -------------- vim-merginal ------------
 
@@ -478,11 +482,6 @@ let g:ale_linters = { 'c': ['cppcheck'], 'rust': []}
 let g:used_javascript_libs = 'jquery'
 
 
-" -------------- vim-gitgutter -----------
-
-let g:gitgutter_sign_column_always = 1
-
-
 " -------------- clever-f.vim ------------
 
 let g:clever_f_chars_match_any_signs = ';'
@@ -490,9 +489,7 @@ let g:clever_f_chars_match_any_signs = ';'
 
 " -------------- vimtex ------------------
 
-let g:vimtex_latexmk_options = '-pdf -verbose -file-line-error -synctex=1 -interaction=nonstopmode -latexoption=-shell-escape'
 let g:vimtex_view_method = 'zathura'
-let g:vimtex_view_use_temp_files = 1
 let g:vimtex_quickfix_ignored_warnings = [
     \ 'Underfull',
     \ 'Overfull',
