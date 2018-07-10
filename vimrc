@@ -54,9 +54,9 @@ Plug 'easymotion/vim-easymotion'
 Plug 'dag/vim-fish'
 Plug 'AndrewRadev/switch.vim'
 Plug 'jalvesaq/Nvim-R'
-Plug 'ludovicchabant/vim-gutentags'
-Plug 'Shougo/neosnippet.vim' 
-Plug 'Shougo/neosnippet-snippets'
+" Plug 'ludovicchabant/vim-gutentags'
+Plug 'SirVer/ultisnips' 
+Plug 'honza/vim-snippets'
 Plug 'majutsushi/tagbar'
 Plug 'matze/vim-move'
 Plug 'vimwiki/vimwiki'
@@ -66,7 +66,10 @@ if executable('tern')
   Plug 'ternjs/tern_for_vim'
 endif
 if has('nvim')
-  Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'autozimu/LanguageClient-neovim', { 
+        \ 'branch': 'next',
+        \ 'do': 'bash install.sh' 
+        \ }
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'Shougo/echodoc.vim'
   Plug 'Shougo/neoinclude.vim'
@@ -126,6 +129,7 @@ set nocursorline                        " Don't highlight current line
 set ttyfast                             " Speed shit up or something
 set whichwrap+=<,>,[,]                  " Line wrap for arrow keys
 set signcolumn=yes                      " Always sign column
+set cot=menu,menuone                    " complete menu options
 let g:c_syntax_for_h = 1                " Assume h files are c not c++
 if has('nvim')
   let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1   " Cursor shape for neovim
@@ -141,6 +145,8 @@ let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_vert_split = 'bg1'
 let g:gruvbox_sign_column = 'bg0'
 silent! colorscheme	gruvbox
+hi CursorLine ctermbg=235 guibg=#282828
+hi CursorLineNr ctermfg=214 ctermbg=235 guifg=#fabd2f guibg=#282828
 
 
 " -------------- MAPPINGS ----------------
@@ -167,6 +173,9 @@ noremap  gj         10j
 noremap  gk         10k
 noremap  gl         25l
 
+" Center cursor
+nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>:set invcursorline<CR>
+
 " quick macro
 map      Q          @q
 
@@ -187,8 +196,8 @@ inoremap <leader>j  <C-O>o
 inoremap <leader>k  <C-O>O
 
 " Navigation from insert
-inoremap <expr> <C-J> pumvisible() ? "\<C-n>" : "\<Down>"
-inoremap <expr> <C-K> pumvisible() ? "\<C-p>" : "\<Up>"
+inoremap <C-J>      <Down>
+inoremap <C-K>      <Up>
 inoremap <C-H>      <Left>
 inoremap <C-L>      <Right>
 
@@ -221,6 +230,9 @@ nnoremap <leader>c yy0i> <ESC>:r !<C-R>"<CR>
 " Filetype mappings
 autocmd FileType tex map  <buffer> <Leader>v :w<CR><LocalLeader>lv
 autocmd FileType tex imap <buffer> <Leader>v <C-O>:w<CR><C-O><LocalLeader>lv
+
+" Alternative file
+nnoremap <leader>a :A<CR>
 
 
 " -------------- COMMANDS ----------------
@@ -270,15 +282,17 @@ let g:tagbar_compact = 1
 " -------------- LanguageClient ----------
 
 let g:LanguageClient_serverCommands = {
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls']
+    \ 'rust': ['rls'],
+    \ 'cpp': ['~/cquery/build/release/bin/cquery', '--log-file=/tmp/cq.log', '--init={"cacheDirectory":"/tmp/cquery"}']
     \ }
 let g:LanguageClient_autoStart = 1
 if has('nvim')
   nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-  nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+  nnoremap <silent> <c-]> :call LanguageClient_textDocument_definition()<CR>
   nnoremap <silent> gr :call LanguageClient_textDocument_rename()<CR>
-  nnoremap <silent> <C-T> :call LanguageClient_textDocument_documentSymbol()<CR>
+  nnoremap <silent> <C-T> :call LanguageClient_workspace_symbol()<CR>
   nnoremap <silent> <leader>r :call LanguageClient_textDocument_references()<CR>
+  set formatexpr=LanguageClient_textDocument_rangeFormatting()
 else
   nnoremap <C-T> :Tags<CR>
 endif
@@ -318,27 +332,46 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#max_menu_width = -1
 let g:deoplete#max_abbr_width = -1
-call deoplete#custom#source('neosnippet', 'rank', 9999)
-call deoplete#custom#source('buffer', 'rank', 0)
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+call deoplete#custom#source('ultisnips', 'rank', 9999)
+let g:deoplete#ignore_sources = {}
+let g:deoplete#ignore_sources._ = ['buffer', 'around', 'dictionary', 'tag', 'member']
 
 
-" -------------- neosnippet --------------
+" -------------- ultisnips ---------------
 
-let g:neosnippet#enable_completed_snippet = 1
-let g:neosnippet#enable_optional_arguments = 0
-imap <expr> <C-F> neosnippet#expandable_or_jumpable() ?
-      \ "\<Plug>(neosnippet_jump_or_expand)" :
-      \ deoplete#mappings#close_popup()
-smap <expr> <C-F> neosnippet#expandable_or_jumpable() ?
-      \ "\<Plug>(neosnippet_jump_or_expand)" :
-      \ deoplete#mappings#close_popup()
+let g:ulti_expand_res = 0 "default value, just set once
+function! CompleteSnippet()
+  if empty(v:completed_item)
+    return
+  endif
 
-" For conceal markers.
-if has('conceal')
-  set conceallevel=2
-endif
+  call UltiSnips#ExpandSnippet()
+  if g:ulti_expand_res > 0
+    return
+  endif
+  
+  let l:complete = type(v:completed_item) == v:t_dict ? v:completed_item.word : v:completed_item
+  let l:comp_len = len(l:complete)
+
+  let l:cur_col = mode() == 'i' ? col('.') - 2 : col('.') - 1
+  let l:cur_line = getline('.')
+
+  let l:start = l:comp_len <= l:cur_col ? l:cur_line[:l:cur_col - l:comp_len] : ''
+  let l:end = l:cur_col < len(l:cur_line) ? l:cur_line[l:cur_col + 1 :] : ''
+
+  call setline('.', l:start . l:end)
+  call cursor('.', l:cur_col - l:comp_len + 2)
+
+  call UltiSnips#Anon(l:complete)
+endfunction
+
+autocmd CompleteDone * call CompleteSnippet()
+imap <silent><expr> <tab> pumvisible() ? "\<c-y>" : "\<tab>"
+
+let g:UltiSnipsExpandTrigger="<NUL>"
+let g:UltiSnipsListSnippets="<NUL>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 
 " -------------- switch.vim --------------
@@ -349,7 +382,7 @@ let g:switch_mapping = "<leader>."
 " -------------- auto-pairs --------------
 
 let g:AutoPairsMapCh=0
-au FileType rust let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`', '<':'>'}
+au FileType rust let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"'}
 
 
 " -------------- a.vim ------------------- 
@@ -360,16 +393,16 @@ map \a :A<CR>
 " -------------- vim-dasht --------------- 
 
 " Search API docs for query you type in:
-nnoremap <Leader>dk :Dasht<Space>
+nnoremap <leader>gd :Dasht<Space>
 
 " Search API docs for word under cursor:
-nnoremap <silent> <Leader>dK :call Dasht([expand('<cWORD>'), expand('<cword>')])<Return>
+nnoremap <silent> gd :call Dasht([expand('<cWORD>'), expand('<cword>')])<Return>
 
 " Search API docs for the selected text:
-vnoremap <silent> <Leader>dK y:<C-U>call Dasht(getreg(0))<Return>
+vnoremap <silent> gd y:<C-U>call Dasht(getreg(0))<Return>
 
 let g:dasht_filetype_docsets = {
-      \ 'cpp': ['boost', 'c++', '^c$', 'OpenGL', 'OpenCV_C'],
+      \ 'cpp': ['c++', '^c$', 'OpenGL'],
       \ 'html': ['css', 'js', 'bootstrap', 'jquery'],
       \ 'javascript': ['jasmine', 'nodejs', 'grunt', 'gulp', 'jade', 'react'],
       \ 'python': ['(num|sci)py', 'pandas', 'sqlalchemy', 'twisted', 'jinja'],
@@ -474,7 +507,7 @@ hi! link ALEWarningSign GruvboxYellow
 let g:ale_sign_column_always = 1
 nnoremap gn :ALENext<CR>
 nnoremap gN :ALEPrevious<CR>
-let g:ale_linters = { 'c': ['cppcheck'], 'rust': []}
+let g:ale_linters = { 'c': ['cppcheck'], "cpp": [], 'rust': []}
 
 
 " -------------- javascript-libraries ----
