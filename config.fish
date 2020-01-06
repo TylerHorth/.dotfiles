@@ -8,12 +8,12 @@ end
 
 set fish_term24bit 1
 
-if which mvim > /dev/null
+if which mvim >/dev/null 2>/dev/null
   function vi; mvim -v $argv; end
   function vim; mvim -v $argv; end
 end
 
-if which nvim > /dev/null
+if which nvim >/dev/null 2>/dev/null
   function vi; nvim $argv; end
   function vim; nvim $argv; end
 end
